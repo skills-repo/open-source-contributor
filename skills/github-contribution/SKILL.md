@@ -1,6 +1,13 @@
 ---
 name: github-contribution
 description: Fork→Sync→Branch→Fix→PR 全流程自动化，含变更计划和 live-proof 最佳实践
+source:
+  type: derived
+  repo: skills-repo/open-source-contributor
+  path: skills/github-contribution/SKILL.md
+  version: 1.7.4
+  updated: 2026-07-26
+  url: https://github.com/Linux2010/my-skills/blob/main/agents/github-contribution/SKILL.md
 metadata:
   category: 贡献
   platform: GitHub

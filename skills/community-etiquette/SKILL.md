@@ -1,6 +1,12 @@
 ---
 name: community-etiquette
 description: 开源社区沟通规范，Issue 讨论、PR 描述、维护者互动、贡献指南遵循
+source:
+  type: original
+  repo: skills-repo/open-source-contributor
+  path: skills/community-etiquette/SKILL.md
+  version: 1.0.0
+  updated: 2026-07-26
 metadata:
   category: 社区
   platform: GitHub

@@ -1,6 +1,13 @@
 ---
 name: issue-finder
 description: 智能发现高价值 GitHub Issue，通过正向标签检测和优先级评分找到最佳贡献机会
+source:
+  type: derived
+  repo: skills-repo/open-source-contributor
+  path: skills/issue-finder/SKILL.md
+  version: 1.7.4
+  updated: 2026-07-26
+  url: https://github.com/Linux2010/my-skills/blob/main/agents/github-contribution/SKILL.md
 metadata:
   category: 发现
   platform: GitHub

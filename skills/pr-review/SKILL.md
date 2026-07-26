@@ -1,6 +1,13 @@
 ---
 name: pr-review
 description: PR Review 响应策略，应对自动化评审机器人（ClawSweeper/Greptile）和人工审查
+source:
+  type: derived
+  repo: skills-repo/open-source-contributor
+  path: skills/pr-review/SKILL.md
+  version: 1.7.4
+  updated: 2026-07-26
+  url: https://github.com/Linux2010/my-skills/blob/main/agents/github-contribution/SKILL.md
 metadata:
   category: 评审
   platform: GitHub
