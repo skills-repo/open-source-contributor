@@ -1,12 +1,13 @@
 ---
 name: community-etiquette
-description: 开源社区沟通规范，Issue 讨论、PR 描述、维护者互动、贡献指南
+description: 开源社区沟通规范：CONTRIBUTING 解读、PR 描述、AI 披露、维护者互动、审查应对
 source:
-  type: original
+  type: derived
   repo: skills-repo/open-source-contributor
   path: skills/community-etiquette/SKILL.md
   version: 1.0.0
   updated: 2026-07-26
+  url: https://skills.sh/daymade/claude-code-skills/github-contributor
 metadata:
   category: 社区
   platform: GitHub
@@ -15,53 +16,22 @@ metadata:
 
 # 社区礼仪
 
-> 开源社区沟通的软技能：如何提问、如何写 PR 描述、如何与维护者有效互动。
+> 开源贡献的软技能全流程：从阅读 CONTRIBUTING.md 到 PR 被合并后的维护者关系维护。
 
 ## 能力
 
-- **Issue 沟通**：如何表达兴趣、询问澄清、请求分配
-- **PR 描述优化**：标题格式、描述结构、关联 Issue 方式
-- **维护者互动**：感谢审查、接受反馈、推动进展
-- **CONTRIBUTING.md 解读**：自动提取项目的贡献规则
-- **文化适应**：不同项目的沟通风格（正式/轻松/直接）
+- **CONTRIBUTING.md 解读**：将贡献指南视为硬性合约，逐条提取合并前置条件
+- **PR 描述写作**：中英双语结构化模板，让维护者 30 秒内决定是否合入
+- **AI 辅助披露**：当项目有 AI 贡献条款时，主动、具体地声明 AI 使用方式
+- **维护者互动**：回应 bot 审查评论、处理 review 反馈、接受拒绝
+- **反模式识别**：10 种导致 PR 被关闭的常见失败模式及避免方法
 
 ## 使用方式
 
-在 Claude Code 中使用 `/community-etiquette` 调用。
-
 ```
-/community-etiquette 帮我起草在 issue #123 下的评论
-/community-etiquette 审查这个 PR 描述是否符合项目规范
-```
-
-## 沟通模板
-
-### Issue 兴趣表达
-
-```markdown
-Hi, I'd like to work on this issue. Based on my understanding, the fix involves:
-- <具体技术点 1>
-- <具体技术点 2>
-
-I've read the CONTRIBUTING guide and will follow the project's PR process.
-Could you assign this to me? Thanks!
-```
-
-### PR 审查感谢
-
-```markdown
-Thanks for the review! I've addressed all feedback:
-- <改动 1>: <说明>
-- <改动 2>: <说明>
-
-All review conversations should now be resolved. Please re-review when convenient.
-```
-
-### PR 关闭感谢（PR 未被合并）
-
-```markdown
-Thanks for the review and feedback. I understand this approach isn't the right fit.
-I've closed this PR and will continue learning the codebase. Appreciate your time!
+/community-etiquette 解读这个项目的 CONTRIBUTING.md
+/community-etiquette 帮我写这个 PR 的描述
+/community-etiquette 如何回应维护者的这条 review 评论
 ```
 
 ## 黄金法则
@@ -71,12 +41,15 @@ I've closed this PR and will continue learning the codebase. Appreciate your tim
 3. **感谢审查时间** — 维护者用业余时间审查，心存感激
 4. **不争论风格** — 如果维护者要求改，改就是
 5. **接受拒绝** — PR 被拒不是对你的否定，优雅关闭，继续学习
+6. **AI 声明要具体** — 不是泛泛说"用了 AI"，而是说清楚在哪一步用了什么工具
+7. **证据驱动** — 写"已测试"之前，确保你确实运行了项目指定的测试命令
+8. **用 --force-with-lease** — 永远不用裸 --force，防止销毁 review 线程
 
 ## 适用场景
 
 - 首次在开源项目下发表评论
 - PR 被要求修改，不确定如何回应
-- 需要解释复杂的技术决策
+- 项目有 AI 辅助贡献条款，需要写声明
 - PR 被拒，想保持良好关系
 
 ## 限制
