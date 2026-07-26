@@ -16,12 +16,12 @@
 
 ## 技能清单
 
-| 环节 | 技能 | 描述 |
-|------|------|------|
-| 🔍 发现 | `issue-finder` | 智能 Issue 发现：正向标签检测、优先级评分、多仓库搜索 |
-| 🔄 贡献 | `github-contribution` | Fork→Sync→Branch→Fix→PR 全流程自动化与最佳实践 |
-| 👀 评审 | `pr-review` | PR Review 响应策略、自动化评审（ClawSweeper/Greptile）应对 |
-| 🤝 社区 | `community-etiquette` | 开源社区沟通规范、贡献指南遵循、维护者关系 |
+| 环节 | 技能 | 描述 | 来源 |
+|------|------|------|------|
+| 🔍 发现 | `issue-finder` | 智能 Issue 发现：正向标签检测、优先级评分、多仓库搜索 | [衍生](https://clawhub.ai/skills/issue-finder) |
+| 🔄 贡献 | `github-contribution` | Fork→Sync→Branch→Fix→PR 全流程自动化与最佳实践 | [衍生](https://clawhub.ai/skills/github-contribution) |
+| 👀 评审 | `pr-review` | PR Review 响应策略、自动化评审（ClawSweeper/Greptile）应对 | [衍生](https://clawhub.ai/skills/pr-review) |
+| 🤝 社区 | `community-etiquette` | 开源社区沟通规范、贡献指南遵循、维护者关系 | 原创 |
 
 ## 快速开始
 
