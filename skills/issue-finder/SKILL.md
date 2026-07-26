@@ -1,6 +1,6 @@
 ---
 name: issue-finder
-description: 智能发现高价值 GitHub Issue，通过正向标签检测和优先级评分找到最佳贡献机会
+description: 智能发现高价值 GitHub Issue，正向标签检测和优先级评分找到最佳贡献机会
 source:
   type: derived
   repo: skills-repo/open-source-contributor

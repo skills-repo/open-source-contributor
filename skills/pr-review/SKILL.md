@@ -1,6 +1,6 @@
 ---
 name: pr-review
-description: PR Review 响应策略，应对自动化评审机器人（ClawSweeper/Greptile）和人工审查
+description: PR Review 响应策略，应对自动化评审（ClawSweeper/Greptile）和人工审查
 source:
   type: derived
   repo: skills-repo/open-source-contributor

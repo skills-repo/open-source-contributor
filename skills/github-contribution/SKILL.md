@@ -1,6 +1,6 @@
 ---
 name: github-contribution
-description: Fork→Sync→Branch→Fix→PR 全流程自动化，含变更计划和 live-proof 最佳实践
+description: Fork→Sync→Branch→Fix→PR 全流程自动化，含变更计划和 live-proof 实践
 source:
   type: derived
   repo: skills-repo/open-source-contributor

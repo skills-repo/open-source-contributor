@@ -1,6 +1,6 @@
 ---
 name: community-etiquette
-description: 开源社区沟通规范，Issue 讨论、PR 描述、维护者互动、贡献指南遵循
+description: 开源社区沟通规范，Issue 讨论、PR 描述、维护者互动、贡献指南
 source:
   type: original
   repo: skills-repo/open-source-contributor
