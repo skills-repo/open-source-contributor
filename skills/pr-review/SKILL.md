@@ -5,9 +5,9 @@ source:
   type: derived
   repo: skills-repo/open-source-contributor
   path: skills/pr-review/SKILL.md
-  version: 1.7.4
+  version: 2.0.1
   updated: 2026-07-26
-  url: https://github.com/Linux2010/my-skills/blob/main/agents/github-contribution/SKILL.md
+  url: https://clawhub.ai/skills/pr-review
 metadata:
   category: 评审
   platform: GitHub

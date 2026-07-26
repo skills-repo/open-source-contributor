@@ -7,7 +7,7 @@ source:
   path: skills/github-contribution/SKILL.md
   version: 1.7.4
   updated: 2026-07-26
-  url: https://github.com/Linux2010/my-skills/blob/main/agents/github-contribution/SKILL.md
+  url: https://clawhub.ai/skills/github-contribution
 metadata:
   category: 贡献
   platform: GitHub

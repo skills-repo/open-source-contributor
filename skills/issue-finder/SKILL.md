@@ -5,9 +5,9 @@ source:
   type: derived
   repo: skills-repo/open-source-contributor
   path: skills/issue-finder/SKILL.md
-  version: 1.7.4
+  version: 1.6.0
   updated: 2026-07-26
-  url: https://github.com/Linux2010/my-skills/blob/main/agents/github-contribution/SKILL.md
+  url: https://clawhub.ai/skills/issue-finder
 metadata:
   category: 发现
   platform: GitHub
