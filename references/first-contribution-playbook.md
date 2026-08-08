@@ -72,7 +72,68 @@ gh pr list --repo <owner>/<repo> --search "<keyword>" --state open
 | 用裸 `--force` 推 | 冲掉 review 线程，激怒维护者 | 仅用 `--force-with-lease`，且只在自己 fork 的 main |
 | 假"已测试" | 声称跑过测试实际没跑 | 贴 BEFORE vs AFTER 终端输出（见 `github-contribution` Live-Proof） |
 
-## 6. 首次贡献检查清单
+## 6. Fork 工作流命令详解
+
+```bash
+# 添加上游并同步（保持 fork 与上游一致）
+git remote add upstream https://github.com/<owner>/<repo>.git
+git fetch upstream
+git checkout main
+git merge upstream/main          # 或 rebase，保持线性
+git push origin main
+
+# 功能分支（永远不在 main 开发）
+git checkout -b fix/issue-5968 upstream/main
+# ... 开发、提交（语义化）...
+git push -u origin fix/issue-5968
+```
+
+> 推自己 fork 可用 `--force-with-lease`（安全）；**绝不**对 upstream 用裸 `--force`。
+
+## 7. CONTRIBUTING 解读清单
+
+读 CONTRIBUTING.md 时提取并打勾：
+- [ ] 分支策略（base 分支是 main 还是 dev？）
+- [ ] 提交规范（是否要求 Conventional Commits / DCO 签名）
+- [ ] 测试命令（怎么跑、覆盖要求）
+- [ ] PR 模板（必填哪些 section）
+- [ ] 许可与 CLA（贡献即授权？）
+
+读不懂任一条 → 先在 Issue 问，别猜。
+
+## 8. 实战：首次给 openclaw 提一个文档 PR
+
+```
+1) 选目标：openclaw/openclaw，有 good first issue 标签 → 低风险
+2) 立题四问：
+   - 复现？文档修复无需复现，但能本地构建文档 ✅
+   - 最小面？只改 1 个 .md ✅
+   - 测试？文档站构建通过 ✅
+   - 回退？删 1 文件即可 ✅
+3) 切分支：git checkout -b docs/fix-readme upstream/main
+4) 改 README 的接口示例错误
+5) 本地构建文档通过
+6) 提 PR：fix(docs): 修正 README 快速开始示例 (fixes #5968)
+7) 套 PR 模板，附构建输出（非截图）
+```
+全流程未碰 main、改动 1 文件、带 issue 关联、proof 充分 → 高合并率。
+
+## 9. 选题反模式（扩展）
+
+| 反模式 | 后果 | 修正 |
+|--------|------|------|
+| 闷头写大 PR | 被关 | 先 Issue 讨论 |
+| 没读 CONTRIBUTING | 被打回 | 当合约读 |
+| 在 main 开发 | 难 rebase | 功能分支 |
+| 抢已认领 issue | 重复劳动 | 查 assignees |
+| 裸 force 推 | 冲线程 | --force-with-lease |
+| 假"已测试" | 失信 | 真跑 |
+| 选僵尸项目 | 石沉大海 | 查最后 push |
+| 首贡献做架构 |  overload | 从文档/typo 起 |
+| 忽略标签体系 | 低合并率 | 找正向标签 |
+| 一次改多库 | 难审 | 单库单 PR |
+
+## 10. 首次贡献检查清单
 
 - [ ] 已确认项目能本地跑通（Q1 = 是）
 - [ ] 已读 CONTRIBUTING.md，提取合并前置条件
@@ -83,7 +144,7 @@ gh pr list --repo <owner>/<repo> --search "<keyword>" --state open
 - [ ] 已准备 BEFORE vs AFTER 证据（终端输出，非截图）
 - [ ] 已选定将要落到哪个子技能的流程（issue-finder / github-contribution / pr-review）
 
-## 7. 何时该放弃这个项目
+## 11. 何时该放弃这个项目
 
 出现以下任一信号，果断换项目比硬刚更划算：
 - 最后一次 push 超过 12 个月（僵尸项目，PR 大概率石沉大海）

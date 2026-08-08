@@ -90,7 +90,65 @@ PR 描述 = 模板章节的覆盖度检查。模板 `assets/PULL_REQUEST_TEMPLAT
 | PR 描述只有标题 | 机器人判 needs more info | 套模板六章节 |
 | body 行过长 | 移动端难读 | 每行 ≤100 字符 |
 
-## 6. 提交前自检清单
+## 6. Squash 与 CI 实战
+
+```bash
+# 合并前把功能分支压成 1 条语义化 commit
+git rebase -i upstream/main        # 把 fixup 行改成 s（squash）
+git commit --amend                 # 补 issue 关联
+git push -u origin fix/issue-5968 --force-with-lease
+```
+
+CI 失败排查顺序：lint → type check → unit → build → e2e。先看失败阶段日志，本地复现再改，不要盲改 ci 配置。
+
+## 7. PR 描述反例对比
+
+| 反例 | 正例 |
+|------|------|
+| "fix bug" | "fix(parser): 处理 EOF 越界，修复 #5968" |
+| 只有标题无章节 | 套模板六章节 + BEFORE/AFTER |
+| "please review" | "fixes #5968，已补回归测试，CI 全绿" |
+| 贴截图当 proof | 贴终端 BEFORE/AFTER 输出 |
+
+## 8. 实战：一条规范 commit 的完整产出
+
+```bash
+# 1) 写变更计划（5-Point 摘要）
+# Observed: 解析器在文件末尾 EOF 处越界
+# Expected: 静默退出或报清晰错误
+# Root cause: 循环未检查 index < len
+# Seam: lexer.next() 末尾返回 EOF token
+# Risk: 仅影响边界解析，单测覆盖
+
+# 2) 提交（语义化 + 关联 issue）
+git commit -m "fix(parser): 处理 EOF 越界避免索引异常 (fixes #5968)"
+
+# 3) 自检
+git log -1 --pretty=%B > /tmp/msg.txt
+python3 scripts/check_contribution.py commit --file /tmp/msg.txt   # 期望 0 ERROR
+
+# 4) PR 描述套模板六章节，跑 pr 模式自检
+python3 scripts/check_contribution.py pr --file /tmp/pr_body.md     # 期望 0 ERROR
+```
+
+反例对照见上文"PR 描述反例对比"。
+
+## 9. 提交反模式（扩展）
+
+| 反模式 | 后果 | 修正 |
+|--------|------|------|
+| subject 用中文/句号 | 格式错 | 英文 type+祈使无句号 |
+| 超长 subject | 截断 | ≤72 字符 |
+| 只写 update/fix bug | 无信息 | type+scope+对象 |
+| 不关联 issue | Issue 孤立 | fixes #N |
+| body 行过长 | 难读 | ≤100 字符 |
+| oops 提交 | 历史脏 | amend |
+| 无测试声明 | 不可信 | 写测了什么 |
+| DCO 缺失 | 被拒 | 补签名 |
+| 改 base 分支 | 跑偏 | 按 CONTRIBUTING |
+| 裸 force 推 | 冲线程 | --force-with-lease |
+
+## 10. 提交前自检清单
 
 - [ ] 已跑 `python3 scripts/check_contribution.py commit --file <msg>` 且 0 ERROR
 - [ ] subject 符合 Conventional Commits 且 ≤72 字符
@@ -100,7 +158,7 @@ PR 描述 = 模板章节的覆盖度检查。模板 `assets/PULL_REQUEST_TEMPLAT
 - [ ] 若改了贡献流程相关文件，已跑 `contributing` 模式检查 CONTRIBUTING
 - [ ] 无 "oops"/"fix typo" 类噪声 commit（必要则 amend）
 
-## 7. 命令速查
+## 11. 命令速查
 
 ```bash
 # 把暂存的提交消息落盘到文件后检查
