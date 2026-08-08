@@ -14,6 +14,18 @@
 - **证据驱动** — PR 附带 BEFORE vs AFTER 对比，不用截图用终端输出
 - **尊重维护者** — 小 PR、清晰描述、快速响应审查反馈
 
+## 架构说明（superpower）
+
+本仓库采用 skills-repo 组织的 **superpower 架构**：
+
+- `SKILL.md` — 唯一入口，只做能力路由（本文件）
+- `references/` — 深层 playbook：首次贡献决策、提交规范自检、评审应对 SOP
+- `skills/` — 4 个细粒度子技能，可单独安装
+- `scripts/` — `check_contribution.py` 提交规范自检（纯标准库、可复现）
+- `assets/` — PR 模板与提交规范配置
+
+渐进式加载：Agent 先读路由表，按需读取 `references/` 或 `skills/`，重复任务交给脚本。
+
 ## 技能清单
 
 | 环节 | 技能 | 描述 | 来源 |
@@ -23,9 +35,13 @@
 | 👀 评审 | `pr-review` | PR Review 响应策略、自动化评审（ClawSweeper/Greptile）应对 | [衍生](https://clawhub.ai/skills/pr-review) |
 | 🤝 社区 | `community-etiquette` | 开源社区沟通规范、贡献指南遵循、维护者关系 | [衍生](https://skills.sh/daymade/claude-code-skills/github-contributor) |
 
-## 快速开始
+## 安装
 
 ```bash
+# 整库安装（推荐）—— 拿到路由层 + references + scripts + assets
+npx skills add skills-repo/open-source-contributor
+
+# 单技能安装 —— 只要某一个细粒度能力
 npx skills add skills-repo/open-source-contributor@github-contribution -g -y
 npx skills add skills-repo/open-source-contributor@issue-finder -g -y
 npx skills add skills-repo/open-source-contributor@pr-review -g -y

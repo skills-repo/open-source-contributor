@@ -1,0 +1,18 @@
+{
+  "_comment": "开源贡献提交规范配置 —— 本文件是 scripts/check_contribution.py 的规则来源。以 _ 开头的键为注释/元信息，脚本加载时会跳过，不会当作规则。团队可在此自定义阈值与必含章节。",
+  "allowed_types": [
+    "feat", "fix", "docs", "style", "refactor",
+    "perf", "test", "build", "ci", "chore", "revert"
+  ],
+  "max_subject_len": 72,
+  "max_body_line_len": 100,
+  "require_issue_link": true,
+  "issue_link_regex": "(#\\d+|\\b(?:fix|close|resolve|fixes)\\s+#\\d+)",
+  "required_contributing_sections": [
+    ["code of conduct"],
+    ["getting started", "environment setup", "setup", "installation"],
+    ["how to submit", "submitting", "submit a pr", "pull request"],
+    ["coding style", "code style", "style guide"],
+    ["running tests", "tests", "test plan"]
+  ]
+}
