@@ -34,8 +34,9 @@ metadata:
 | 选目标项目 / Issue / 切入方式（跨子技能的元决策） | `references/first-contribution-playbook.md` | 首次贡献 选题 立题 项目选择 适合贡献 预检 |
 | commit / PR / CONTRIBUTING 规范自检与量化规则 | `references/commit-pr-conventions.md` | 提交规范 commit PR 模板 CONTRIBUTING 约定 语义化 |
 | 应对评审反馈、自动化机器人、回复话术 | `references/review-response-playbook.md` | 评审 review 反馈 机器人 维护者 反驳 拆分 |
+| 用近期已合并 PR 校准 scope、proof、兼容和评审判断 | `references/merged-pr-gold-cases.md` | merged PR gold case OpenClaw owner proof exact-head |
 | 发现高价值 Issue、正向标签与优先级评分 | `skills/issue-finder/SKILL.md` | issue 发现 标签 优先级 good first queueable |
-| Fork 同步→分支→修复→PR 全流程与 Live-Proof | `skills/github-contribution/SKILL.md` | Fork 同步 分支 PR 工作流 live-proof 5-Point |
+| Fork 预检→分支→修复→PR 全流程与 Proof | `skills/github-contribution/SKILL.md` | Fork 预检 分支 PR owner exact-head proof |
 | 社区沟通规范、CONTRIBUTING 解读、AI 披露 | `skills/community-etiquette/SKILL.md` | 社区礼仪 CONTRIBUTING PR描述 AI披露 维护者 |
 | PR Review 响应策略与反馈分类 | `skills/pr-review/SKILL.md` | PR review 响应 自动化 分类 conversation |
 
@@ -64,12 +65,12 @@ python3 scripts/check_contribution.py commit --file /tmp/msg.txt
 
 ## 核心原则（始终遵循）
 
-1. **先读 CONTRIBUTING**：80% 的沟通问题源于没读贡献指南，把它当硬性合约。
-2. **小 PR、早沟通**：大改动先开 Issue 讨论，不在 main 直接开发，不闷头写一周。
-3. **证据驱动**：PR 附 BEFORE vs AFTER 终端输出，不用截图；声称"已测试"前真跑过。
+1. **先读目标规则**：把根级/scoped 指南、安全政策、CODEOWNERS 和当前 PR 模板当硬性合约。
+2. **单一问题、早沟通**：用共享不变量定 scope；产品/兼容/安全大改先讨论，不在共享 base 开发。
+3. **证据驱动**：按风险提供测试、终端、日志、截图/录屏或真实行为 proof；声称"已测试"前真跑过。
 4. **渐进式加载**：先读路由表与对应 `references/`，再动手，不凭记忆猜命令。
-5. **明确边界**：脚本只做规范自检、出报告，不替你拍板"该贡献哪个项目"或改你的代码。
-6. **尊重维护者**：风格意见照做不争论；用 `--force-with-lease` 而非裸 `--force`。
+5. **明确边界**：优先用目标仓库模板；内置脚本/模板只作已配置的 fallback，不改代码或替维护者决策。
+6. **尊重维护者**：用证据响应评审；仅在已核对的自己 topic branch 必要时用 `--force-with-lease`。
 
 ## 与其他技能协作
 
