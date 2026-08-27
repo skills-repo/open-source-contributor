@@ -76,3 +76,7 @@ gh issue list --repo owner/repo --label "queueable-fix,source-repro" --state ope
 - 依赖项目使用规范的标签体系
 - 小项目可能没有正向标签，需要人工判断
 - 不保证 Issue 未被其他人认领
+
+## 相关参考（Playbook）
+
+- 首次贡献决策 → [`references/first-contribution-playbook.md`](../../references/first-contribution-playbook.md)：标签扫描命中后，用本手册的"立题四问"判断要不要接。

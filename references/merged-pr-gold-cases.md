@@ -158,3 +158,10 @@
 ```
 
 Gold Case 是决策校准，不是复制粘贴模板。先重查目标仓库当前规则、依赖、默认分支、CI、review 和 release 状态。
+
+## 相关子技能与层次边界
+
+- 执行工作流 → [`skills/github-contribution`](../skills/github-contribution/SKILL.md)：本快照用于校准 github-contribution 的"证据阶梯 / owner boundary / proof"判断；gold case 是决策校准，不是复制模板。
+- 评审校准 → [`skills/pr-review`](../skills/pr-review/SKILL.md)：从已合并案例反推 review 关注点。
+- 关联手册：提交规范见 [`commit-pr-conventions.md`](commit-pr-conventions.md)，评审应对见 [`review-response-playbook.md`](review-response-playbook.md)。
+- 层次边界：本篇是**真实案例校准层**，禁止把 100-PR 快照的统计相关性写成通用合并公式（见 github-contribution 限制节）。

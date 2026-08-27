@@ -57,3 +57,9 @@ metadata:
 - 不了解特定项目的内部文化和潜规则
 - 不处理严重行为准则违规（应报告给项目管理者）
 - 沟通风格建议需要结合具体项目上下文
+
+## 相关参考（Playbook）
+
+- 首次贡献决策 → [`references/first-contribution-playbook.md`](../../references/first-contribution-playbook.md)：文档/typo 类低门槛首贡献与 CONTRIBUTING 解读。
+- 评审应对 → [`references/review-response-playbook.md`](../../references/review-response-playbook.md)：维护者关系长期经营与跨仓库口碑。
+- 提交与 PR 规范 → [`references/commit-pr-conventions.md`](../../references/commit-pr-conventions.md)：PR 描述写作的量化章节。

@@ -174,3 +174,11 @@ python3 scripts/check_contribution.py contributing --file CONTRIBUTING.md
 # 自检：脚本校验内置资产（配置+模板）应为 0 ERROR
 python3 scripts/check_contribution.py selfcheck
 ```
+
+## 相关子技能与层次边界
+
+- 执行工作流 → [`skills/github-contribution`](../skills/github-contribution/SKILL.md)：本手册是提交/PR 的**量化规范与自检清单**，真正的 Fork→分支→修复→PR 动作在 github-contribution 执行；提交前用 §11 命令跑 `check_contribution.py` 作为门禁。
+- PR 描述评审 → [`skills/pr-review`](../skills/pr-review/SKILL.md)：PR 描述六章节覆盖度由 pr-review 的评审视角校准。
+- PR 描述礼仪 → [`skills/community-etiquette`](../skills/community-etiquette/SKILL.md)：措辞与 AI 披露等软规则。
+- 关联手册：选题决策见 [`first-contribution-playbook.md`](first-contribution-playbook.md)，评审应对见 [`review-response-playbook.md`](review-response-playbook.md)，真实案例校准见 [`merged-pr-gold-cases.md`](merged-pr-gold-cases.md)。
+- 配套资产：`scripts/check_contribution.py`（自检脚本）、`assets/commit_conventions.json`（白名单配置）、`assets/PULL_REQUEST_TEMPLATE.md`（PR 模板章节）。

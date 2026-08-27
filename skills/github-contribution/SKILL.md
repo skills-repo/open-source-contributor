@@ -114,3 +114,10 @@ git switch -c fix/<topic> upstream/<base>
 - 不替代目标仓库的贡献、安全、许可和发布规则。
 - 不替用户执行 CLA、DCO、法律声明或生产授权判断。
 - 不把单个项目或单次 100-PR 快照的统计相关性写成通用合并公式。
+
+## 相关参考（Playbook）
+
+- 提交与 PR 规范 → [`references/commit-pr-conventions.md`](../../references/commit-pr-conventions.md)：量化规范 + 自检清单，提交前跑 `scripts/check_contribution.py`。
+- 首次贡献决策 → [`references/first-contribution-playbook.md`](../../references/first-contribution-playbook.md)：选题 → 立项 → 切入的元决策。
+- 已合并 PR Gold Cases → [`references/merged-pr-gold-cases.md`](../../references/merged-pr-gold-cases.md)：真实案例校准（正文中已引用）。
+- 评审应对 → [`references/review-response-playbook.md`](../../references/review-response-playbook.md)：收到反馈后的带 SLA 处置流水线。

@@ -65,3 +65,9 @@ metadata:
 - 不了解所有评审机器人的规则（不同项目不同配置）
 - 不替代与维护者的直接沟通
 - 不处理需要项目内部知识的反馈
+
+## 相关参考（Playbook）
+
+- 评审应对 SOP → [`references/review-response-playbook.md`](../../references/review-response-playbook.md)：把本技能的"反馈分类"升级为带 SLA 的处置流水线。
+- 提交与 PR 规范 → [`references/commit-pr-conventions.md`](../../references/commit-pr-conventions.md)："每条反馈独立 commit"的量化门禁。
+- 已合并 PR Gold Cases → [`references/merged-pr-gold-cases.md`](../../references/merged-pr-gold-cases.md)：从真实案例反推 review 关注点。

@@ -181,3 +181,10 @@ Please review #A first.
 - **公开致谢**：合并后简短感谢 review 时间，维护者记得你的靠谱，后续 PR 评审更快、更信任。
 
 > 开源是**长期博弈**：单次合入只在维护者心里挂上号，跨仓库一致的好口碑靠持续、靠谱的小动作积累，远胜一次性大 PR。
+
+## 相关子技能与层次边界
+
+- 评审策略 → [`skills/pr-review`](../skills/pr-review/SKILL.md)：本手册把 pr-review 的"反馈分类"升级为带 SLA 的处置流水线；"每条反馈独立 commit"呼应 commit-pr-conventions。
+- 跨仓礼仪 → [`skills/community-etiquette`](../skills/community-etiquette/SKILL.md)：维护者关系长期经营与跨仓库口碑。
+- 关联手册：提交规范见 [`commit-pr-conventions.md`](commit-pr-conventions.md)（独立 commit 门禁），真实案例见 [`merged-pr-gold-cases.md`](merged-pr-gold-cases.md)。
+- 层次边界：本篇是**收到反馈后的可执行 SOP**，不替代 pr-review 的策略，也不替代 community-etiquette 的软规则。

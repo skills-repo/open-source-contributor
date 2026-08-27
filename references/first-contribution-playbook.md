@@ -153,3 +153,11 @@ git push -u origin fix/issue-5968
 - 你连续两次在 Issue 提问都被无视
 
 > 开源贡献是**长期博弈**，不是一锤子买卖。第一次合入的目标只是"在维护者心里挂上号"，选对战场比写对代码更重要。
+
+## 相关子技能与层次边界
+
+- 找 Issue → [`skills/issue-finder`](../skills/issue-finder/SKILL.md)：本手册解决"选哪个项目/Issue 切入"的元决策，具体的标签扫描与优先级评分交给 issue-finder。
+- 执行工作流 → [`skills/github-contribution`](../skills/github-contribution/SKILL.md)：立题四问通过后进入 github-contribution 的 5-Point 变更计划。
+- 软规则 → [`skills/community-etiquette`](../skills/community-etiquette/SKILL.md)：文档/typo 类首贡献与维护者互动礼仪。
+- 关联手册：提交规范见 [`commit-pr-conventions.md`](commit-pr-conventions.md)，评审应对见 [`review-response-playbook.md`](review-response-playbook.md)。
+- 层次边界：本篇是**前置选题决策**（子技能执行之前），不重复 issue-finder 的扫描命令，也不重复 github-contribution 的修复流程。
