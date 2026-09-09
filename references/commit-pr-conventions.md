@@ -1,10 +1,10 @@
 # 提交与 PR 规范手册（Commit & PR Conventions）
 
-> 子技能 `github-contribution` 给了 PR 模板，`community-etiquette` 讲了 PR 描述怎么写，但两者都没把**"一条 commit / 一个 PR 到底什么叫规范"量化成可机械检查的清单**。本篇把规范拆成"格式规则 + 关联规则 + 完整性规则"三层，并直接对应 `scripts/check_contribution.py` 的检查项——写完提交前跑一遍脚本，能挡掉 80% 的"被打回重写"。
+> 子技能 `github-contribution` 给了 PR 模板，`community-etiquette` 讲了 PR 描述怎么写，但两者都没把**"一条 commit / 一个 PR 到底什么叫规范"量化成可机械检查的清单**。本篇把规范拆成"格式规则 + 关联规则 + 完整性规则"三层，并直接对应 [scripts/check_contribution.py](../scripts/check_contribution.py) 的检查项——写完提交前跑一遍脚本，能挡掉 80% 的"被打回重写"。
 
 ## 1. 为什么需要机器检查
 
-人工 review 提交规范有两大问题：(1) 维护者不耐烦逐条指摘格式；(2) 你自己也记不全所有规则。把规则固化成脚本，提交前自检 → 合并率与口碑双升。`scripts/check_contribution.py` 覆盖三种对象：
+人工 review 提交规范有两大问题：(1) 维护者不耐烦逐条指摘格式；(2) 你自己也记不全所有规则。把规则固化成脚本，提交前自检 → 合并率与口碑双升。[scripts/check_contribution.py](../scripts/check_contribution.py) 覆盖三种对象：
 
 - `commit` —— 单条 commit message 的格式与关联
 - `contributing` —— 仓库 CONTRIBUTING.md 的必含章节
@@ -54,7 +54,7 @@
 
 ## 3. PR 描述规范
 
-PR 描述 = 模板章节的覆盖度检查。模板 `assets/PULL_REQUEST_TEMPLATE.md` 的 `##` 标题即脚本的必检章节。最低覆盖：
+PR 描述 = 模板章节的覆盖度检查。模板 [assets/PULL_REQUEST_TEMPLATE.md](../assets/PULL_REQUEST_TEMPLATE.md) 的 `##` 标题即脚本的必检章节。最低覆盖：
 
 - **描述 (Description)**：一句话说清"改了什么 + 为什么"
 - **关联 Issue (Related Issue)**：至少一条 `fixes #N`
@@ -181,4 +181,4 @@ python3 scripts/check_contribution.py selfcheck
 - PR 描述评审 → [`skills/pr-review`](../skills/pr-review/SKILL.md)：PR 描述六章节覆盖度由 pr-review 的评审视角校准。
 - PR 描述礼仪 → [`skills/community-etiquette`](../skills/community-etiquette/SKILL.md)：措辞与 AI 披露等软规则。
 - 关联手册：选题决策见 [`first-contribution-playbook.md`](first-contribution-playbook.md)，评审应对见 [`review-response-playbook.md`](review-response-playbook.md)，真实案例校准见 [`merged-pr-gold-cases.md`](merged-pr-gold-cases.md)。
-- 配套资产：`scripts/check_contribution.py`（自检脚本）、`assets/commit_conventions.json`（白名单配置）、`assets/PULL_REQUEST_TEMPLATE.md`（PR 模板章节）。
+- 配套资产：[scripts/check_contribution.py](../scripts/check_contribution.py)（自检脚本）、[assets/commit_conventions.json](../assets/commit_conventions.json)（白名单配置）、[assets/PULL_REQUEST_TEMPLATE.md](../assets/PULL_REQUEST_TEMPLATE.md)（PR 模板章节）。

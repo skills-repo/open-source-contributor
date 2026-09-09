@@ -117,7 +117,7 @@ git switch -c fix/<topic> upstream/<base>
 
 ## 相关参考（Playbook）
 
-- 提交与 PR 规范 → [`references/commit-pr-conventions.md`](../../references/commit-pr-conventions.md)：量化规范 + 自检清单，提交前跑 `scripts/check_contribution.py`。
+- 提交与 PR 规范 → [`references/commit-pr-conventions.md`](../../references/commit-pr-conventions.md)：量化规范 + 自检清单，提交前跑 [scripts/check_contribution.py](../../scripts/check_contribution.py)。
 - 首次贡献决策 → [`references/first-contribution-playbook.md`](../../references/first-contribution-playbook.md)：选题 → 立项 → 切入的元决策。
 - 已合并 PR Gold Cases → [`references/merged-pr-gold-cases.md`](../../references/merged-pr-gold-cases.md)：真实案例校准（正文中已引用）。
 - 评审应对 → [`references/review-response-playbook.md`](../../references/review-response-playbook.md)：收到反馈后的带 SLA 处置流水线。

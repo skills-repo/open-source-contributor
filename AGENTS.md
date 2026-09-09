@@ -31,7 +31,7 @@ open-source-contributor/
 1. 先读 `SKILL.md` 路由表，判断任务属于哪一类。
 2. **方法论决策**（选题/规范/评审）→ 读 `references/` 对应 playbook。
 3. **落地具体动作**（找 Issue / 提 PR / 社区沟通 / 应对 review）→ 调 `skills/<name>/SKILL.md`。
-4. **确定性自检**（commit/PR/CONTRIBUTING 规范）→ 跑 `scripts/check_contribution.py`。
+4. **确定性自检**（commit/PR/CONTRIBUTING 规范）→ 跑 [scripts/check_contribution.py](scripts/check_contribution.py)。
 5. 套用 `assets/` 模板，不重复造轮子。
 
 ## 工作约定

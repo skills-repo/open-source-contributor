@@ -31,14 +31,14 @@ metadata:
 
 | 任务 | 读取 / 调用 | 关键词（grep 线索） |
 |------|------------|---------------------|
-| 选目标项目 / Issue / 切入方式（跨子技能的元决策） | `references/first-contribution-playbook.md` | 首次贡献 选题 立题 项目选择 适合贡献 预检 |
-| commit / PR / CONTRIBUTING 规范自检与量化规则 | `references/commit-pr-conventions.md` | 提交规范 commit PR 模板 CONTRIBUTING 约定 语义化 |
-| 应对评审反馈、自动化机器人、回复话术 | `references/review-response-playbook.md` | 评审 review 反馈 机器人 维护者 反驳 拆分 |
-| 用近期已合并 PR 校准 scope、proof、兼容和评审判断 | `references/merged-pr-gold-cases.md` | merged PR gold case OpenClaw owner proof exact-head |
-| 发现高价值 Issue、正向标签与优先级评分 | `skills/issue-finder/SKILL.md` | issue 发现 标签 优先级 good first queueable |
-| Fork 预检→分支→修复→PR 全流程与 Proof | `skills/github-contribution/SKILL.md` | Fork 预检 分支 PR owner exact-head proof |
-| 社区沟通规范、CONTRIBUTING 解读、AI 披露 | `skills/community-etiquette/SKILL.md` | 社区礼仪 CONTRIBUTING PR描述 AI披露 维护者 |
-| PR Review 响应策略与反馈分类 | `skills/pr-review/SKILL.md` | PR review 响应 自动化 分类 conversation |
+| 选目标项目 / Issue / 切入方式（跨子技能的元决策） | [references/first-contribution-playbook.md](references/first-contribution-playbook.md) | 首次贡献 选题 立题 项目选择 适合贡献 预检 |
+| commit / PR / CONTRIBUTING 规范自检与量化规则 | [references/commit-pr-conventions.md](references/commit-pr-conventions.md) | 提交规范 commit PR 模板 CONTRIBUTING 约定 语义化 |
+| 应对评审反馈、自动化机器人、回复话术 | [references/review-response-playbook.md](references/review-response-playbook.md) | 评审 review 反馈 机器人 维护者 反驳 拆分 |
+| 用近期已合并 PR 校准 scope、proof、兼容和评审判断 | [references/merged-pr-gold-cases.md](references/merged-pr-gold-cases.md) | merged PR gold case OpenClaw owner proof exact-head |
+| 发现高价值 Issue、正向标签与优先级评分 | [skills/issue-finder/SKILL.md](skills/issue-finder/SKILL.md) | issue 发现 标签 优先级 good first queueable |
+| Fork 预检→分支→修复→PR 全流程与 Proof | [skills/github-contribution/SKILL.md](skills/github-contribution/SKILL.md) | Fork 预检 分支 PR owner exact-head proof |
+| 社区沟通规范、CONTRIBUTING 解读、AI 披露 | [skills/community-etiquette/SKILL.md](skills/community-etiquette/SKILL.md) | 社区礼仪 CONTRIBUTING PR描述 AI披露 维护者 |
+| PR Review 响应策略与反馈分类 | [skills/pr-review/SKILL.md](skills/pr-review/SKILL.md) | PR review 响应 自动化 分类 conversation |
 
 ## 内置脚本（确定性、可重复执行）
 
@@ -60,8 +60,8 @@ python3 scripts/check_contribution.py commit --file /tmp/msg.txt
 
 `assets/` 提供可直接套用的规范与模板：
 
-- `assets/PULL_REQUEST_TEMPLATE.md` — PR 描述模板（脚本 `pr` 模式以其 `##` 章节为必检项）
-- `assets/commit_conventions.json` — 提交规范配置（脚本 `commit`/`contributing` 的规则来源，可团队自定义）
+- [assets/PULL_REQUEST_TEMPLATE.md](assets/PULL_REQUEST_TEMPLATE.md) — PR 描述模板（脚本 `pr` 模式以其 `##` 章节为必检项）
+- [assets/commit_conventions.json](assets/commit_conventions.json) — 提交规范配置（脚本 `commit`/`contributing` 的规则来源，可团队自定义）
 
 ## 核心原则（始终遵循）
 
