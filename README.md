@@ -39,7 +39,7 @@
 
 ```bash
 # 整库安装（推荐）—— 拿到路由层 + references + scripts + assets
-npx skills add skills-repo/open-source-contributor
+npx skills add skills-repo/open-source-contributor -g -y
 
 # 单技能安装 —— 只要某一个细粒度能力
 npx skills add skills-repo/open-source-contributor@github-contribution -g -y
