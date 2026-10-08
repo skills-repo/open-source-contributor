@@ -53,12 +53,42 @@ metadata:
 | 架构质疑 | 解释设计权衡，提供替代方案 |
 | 要求拆分为小 PR | 接受，关闭大 PR 拆分为 2-3 个小 PR |
 
+## rebase 与被要求 rebase 时的强制推送
+
+> 本地补充（2026-09-16，源于 openclaw/openclaw #120824 实战）。
+
+机器人（ClawSweeper 等）常要求 "must be rebased"。此时**"不强制推送"原则不适用**——rebase 必然改写历史，只有 force-push 才能更新 PR 分支。
+
+- 只在**自己的 fork 分支**上 force-push；先 `git fetch origin <branch>` 刷新 lease，再 `git push --force-with-lease`。
+- 若 `--force-with-lease` 被拒，说明远端已被他方改动 → **停下来查清，绝不要改用 `--force`**。
+- 保持 rebase 结果为**单一提交**（用 `git commit --amend` 吸收修正），便于评审。
+
+### ⚠️ 冲突解决是缺陷注入的主要环节
+
+rebase 的价值在于"保留**已发布契约**"，而非"保留 PR 原文"。两类高发缺陷：
+
+| 缺陷 | 症状 | 预防 |
+|---|---|---|
+| 丢失已发布的契约 | 把上游刻意删除的行为又加回来（如某次发布移除的查询参数） | 读上游测试里的**契约断言**（如 `expect(param).toBeNull()`），以它为准 |
+| 丢失标识符 / helper 定义 | 运行时报 `ReferenceError: xxx is not defined`，静态读 diff 却"很正常" | 冲突若涉及 import / helper 区段，解决后必须实际运行测试 |
+
+**硬规则：force-push 之前，必须在 rebase 后的 head 上跑过评审机器人指定的 focus 测试。** 冲突解决无法靠读 diff 自证正确——只有运行能暴露被丢掉的定义。跳过这一步，几乎必然换来一条红的 CI。
+
+### 环境闸门会伪装成测试失败
+
+失败信息未必指向代码。先排除环境因素，再改代码：
+
+- 引擎版本 / SQLite / 运行时安全校验类报错 → 换到符合 `engines` 的运行时，不要改代码。
+- 脚本退出码非 0，但 `Test Files` / `Tests` 汇总行全绿 → 多为沙箱或清理钩子干扰，**以汇总行为准**。
+- 报错指向与本次改动无关的包（如其他频道的原生依赖）→ 多为安装期网络问题，可忽略。
+
 ## 适用场景
 
 - 首次收到自动化评审机器人反馈（不确定如何应对）
 - PR 被标记 "needs more proof"
 - 多个审查者同时提出反馈，需要协调
 - 审查反馈要求重大修改
+- 机器人要求 rebase 分支（需 force-push，见上文专节）
 
 ## 限制
 

@@ -44,6 +44,7 @@ metadata:
 
 放在 `scripts/`，提交前自检规范，挡掉大部分打回重写：
 
+- `scripts/scan_issue_claims.py <owner/repo> <issue#>...` — **认领判定**：把候选 issue 分成 CLEAN / ATTEMPTED / MERGED / CLAIMED 四类（也可用 `--label X` 扫整个标签池）。避免在已被认领或已修复的 issue 上白干。
 - `scripts/check_contribution.py commit --file <msg>` — 检查 commit 格式/关联 issue/行长
 - `scripts/check_contribution.py contributing --file CONTRIBUTING.md` — 检查必含章节
 - `scripts/check_contribution.py pr --file <pr_body>` — 检查 PR 描述覆盖模板章节

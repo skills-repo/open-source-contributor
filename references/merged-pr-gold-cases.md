@@ -2,10 +2,16 @@
 
 > 用真实合并案例校准贡献计划、证据和评审判断。先读本页的样本边界，再复用案例。
 
+> **时效分层（2026-10-06 增补，本地副本更新，源头 skills-repo 请同步）**：本页**方法论**（数据口径、
+> 注意事项、证据阶梯、复用模板）是持久内核；**快照数据**（2026-08-11 冻结）只作历史基准，绝对数字会
+> 快速老化——每次贡献立项/评审应对时，必须按"实时校准程序"对**同周同域**的合并 PR 重新校准，
+> 不要直接引用快照数字。
+
 ## 目录
 
 - [OpenClaw 最近 100 个合并 PR 快照](#openclaw-最近-100-个合并-pr-快照)
 - [从样本提取的注意事项](#从样本提取的注意事项)
+- [实时校准程序](#实时校准程序每次立项评审应对时执行)
 - [Gold Cases](#gold-cases)
 - [复用模板](#复用模板)
 
@@ -63,6 +69,30 @@
 8. issue 关联、commit 数、文件数和 re-review 节奏以目标仓库规则为准；不要从样本虚构硬阈值。
 9. ClawSweeper 的 proof/rating/status 与历史 check failures 可能滞后；核对 exact-head required checks 和最新 durable comment。
 10. 长期 PR 可在 current main 上重建为单一问题，删除堆叠旧改动，同时保留原作者 provenance 和已知 proof gap。
+11. 继承性 CI 失败（如依赖公告）按 #165898 模式处理：在 Evidence 中审计**基线 lockfile** 并 `cmp` 比对
+    PR lockfile，声明不含依赖变更；2026-10 实测 `source-map-js@1.2.1`（GHSA-68fv-2mgg-jv7q）以此方式通过合并。
+12. 调度器/生命周期类改动的 runtime proof 形态 = **synthetic inline tsx observation**（#165871 先例）：
+    inline fixture 驱动真实 handler/store/admission 出真实状态迁移日志，并明确声明未验证边界
+    （如 "No live Gateway was suspended, aborted, or restarted"）；不要求 live 部署 Gateway。
+    成员级 PR 的重证明形态（#165854 的 Docker lane 完整用户流）不构成外部贡献的默认门槛。
+
+## 实时校准程序（每次立项/评审应对时执行）
+
+快照数据会老化；以下程序在 2026-10-06 对 openclaw/openclaw#165310 实测有效，约 15 分钟：
+
+1. **拉同周同域先例**：`gh pr list --repo <owner/repo> --state merged --limit 40 --json number,title,mergedAt`
+   过滤 `mergedAt > now-7d` 且标题命中目标域（如 sessions/cron/gateway）。
+2. **核对作者关联**（决定证据门槛权重）：
+   `gh api repos/<owner>/<repo>/pulls/<n> --jq '.author_association'`。MEMBER 级的重证明（Docker lane、
+   live 部署）不构成 CONTRIBUTOR 的默认门槛；CONTRIBUTOR 先例的权重最高。
+3. **提取 Evidence 段**：`gh pr view <n> --json body --jq '.body'` 截取 `## Evidence` 之后——记录
+   base-red/head-green、精确命令与用例表、rig/lease 引用、声明过的未验证边界。
+4. **五维对照自己的证据**：base-red/head-green；exact-head CI；runtime-proof 形态（synthetic tsx
+   observation 即达标，live lane 是成员级加分项）；继承性 CI 失败的基线审计；计数器/状态保持类回归测试。
+5. **条件性投入**：只对评审明确点名、且先例中同级别 PR 提供过的证明升级投入；先例未提供的形态不要预支
+   （本例：真实 compaction 引擎复现留作条件项，未预支）。
+6. **把先例写回 PR**：校准评论引用先例编号与形态（事实性、不带情绪），Evidence 升级为先例格式
+   （精确命令 + 用例表），并用 `gh pr edit` 更新正文触发 re-review。
 
 ## Gold Cases
 
