@@ -94,6 +94,37 @@
 6. **把先例写回 PR**：校准评论引用先例编号与形态（事实性、不带情绪），Evidence 升级为先例格式
    （精确命令 + 用例表），并用 `gh pr edit` 更新正文触发 re-review。
 
+## Local Gateway Proof Harness（OpenClaw 专属，可复用配方）
+
+> 当修复涉及**会话生命周期 / compaction / cron** 这类需要真实 Gateway 运行态才能暴露的竞争时，
+> unit / synthetic inline tsx observation（#165871 先例）往往不够，需要起一个隔离 dev Gateway 跑真实生产路径。
+> 本配方源于 #165310 过线实战，零 API 成本（复用本地已配置 provider）。
+
+### 何时用
+- 竞争只在实际 Gateway 运行态 + 真实 session store / admissions 下复现（如 compaction 持锁期间的 cron tick）。
+- bot 明确要求 "live proof" 或 "production-path proof"，且 synthetic fixture 无法覆盖。
+
+### 配方
+```bash
+# 隔离 dev Gateway：scratch 状态目录 + scratch 配置 + 跳过频道 + 空闲端口 + 免鉴权
+OPENCLAW_STATE_DIR=$(mktemp -d) \
+OPENCLAW_CONFIG_PATH=<scratch-config> \
+OPENCLAW_SKIP_CHANNELS=1 \
+<auth-none> \
+openclaw gateway --port <FREE_PORT> &
+```
+- **scratch config**：`agents.entries` 用键式结构、键下不放 `id`；模型复用 `~/.openclaw/openclaw.json` 的 provider（cost=0）。
+- **真实生产路径**：跑 `openclaw sessions compact`（compaction 持锁）+ 触发真实 cron tick，
+  分别捕获 **BEFORE**（覆写 revision 失败）与 **AFTER**（defer 成功、compaction 提交 summary）终端输出，贴进 PR body。
+- **全量构建**（dist 缺 stamp 时）约 12 分钟：pnpm 走 managed node 的 corepack shim；需 `CODEBUDDY_SAFE_DELETE_ENABLED=0`；
+  失败残留 `.artifacts/dist-artifacts.lock` 要删。
+
+### 边界与门槛
+- 明确声明未验证项（如 "No live Gateway was suspended, aborted, or restarted"）。
+- **门槛分层**：CONTRIBUTOR 默认达标的 proof 形态是 synthetic inline tsx observation（#165871）；
+  live Gateway 部署是 MEMBER 级加分项，**不要预支**——只对评审点名且同级别先例提供过的形态投入。
+- 不要 mock/loopback 冒充真实租户或生产证明；贴终端输出而非截图。
+
 ## Gold Cases
 
 ### 1. #114183：删除重复生命周期策略

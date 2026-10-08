@@ -53,6 +53,26 @@ metadata:
 | 架构质疑 | 解释设计权衡，提供替代方案 |
 | 要求拆分为小 PR | 接受，关闭大 PR 拆分为 2-3 个小 PR |
 
+## ClawSweeper 评审阶梯信号解码
+
+> OpenClaw 项目用 ClawSweeper 做自动化评审。它按"阶梯 + 龙虾置信度"给 PR 打分，贡献者读懂信号才能判断
+> 何时该补 proof、何时该停。以下机制源于 #165310 实战，可能随版本漂移，实时核对 durable comment 与最新标签。
+
+| 信号 | 含义 | 你的动作 |
+|------|------|----------|
+| `status: needs proof` | 证据不足，bot 不会推进 | 补 BEFORE/AFTER 终端输出，而非改代码 |
+| 🦞 lobster N/6（数值上升） | proof 置信度在涨 | 继续按 finding 补证据，直到过线 |
+| `rating: 🦞 diamond / platinum ...` | 质量评级标签 | 参考，但**不替代**维护者合并决定 |
+| `👀 ready for maintainer look` | bot 放行，移交维护者 | **停止补证明**，等维护者 review |
+| `@clawsweeper re-review` | 维护者/你触发复评 | 复评后读新一版 finding（RevN），逐条回应 |
+| `RevN` finding 列表 | 第 N 轮评审的具体项 | 用 `[P1]/[P2]` 编号逐条映射到 commit（见 review-response-playbook §4） |
+
+**关键纪律**：
+- 阶梯大致为 silver → gold → platinum，配合 lobster 1/6→6/6；`proof: sufficient` 标签出现通常意味着 bot 认可证据。
+- **绝不要手工补 bot/maintainer 控制的 proof、rating、status 或 merge 标签**——会被视为篡改，且标签会滞后。
+- proof/rating/status 与历史 check failures 可能滞后；核对 exact-head required checks 和最新 durable comment，不要凭旧标签判断。
+- 在出现 `ready for maintainer look` 之前反复 at 维护者 = 骚扰；bot 放行后才进入人工阶段。
+
 ## rebase 与被要求 rebase 时的强制推送
 
 > 本地补充（2026-09-16，源于 openclaw/openclaw #120824 实战）。

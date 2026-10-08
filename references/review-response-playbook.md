@@ -70,6 +70,21 @@ Good point. 我考虑过 <替代方案>，但 <理由：性能/兼容性/可读�
 Done, thanks for the polish.
 ```
 
+**逐条对账（finding → [P1]/[P2] → commit）—— 让 bot 复评直接对账**
+```
+All findings resolved on `<head-sha>`:
+
+1. **[P1] <finding 简述>** — 已修复（`<commit-hash>`）：
+   <一句话根因 + 验证方式>
+2. **[P2] <finding 简述>** — 已修复（`<commit-hash>`）：
+   <一句话根因 + 验证方式>
+3. **[P2] <finding 简述>** — 非代码项，论证（无 commit）：
+   <证据 / 对比同域 merged PR>
+
+严重度按项目约定（P1=阻断 / P2=建议）；每条对应一个独立语义化 commit，
+**不要** squash 成单个 `address comments` —— 否则维护者被迫整体重读，`git blame` 失去意义。
+```
+
 ## 5. 自动化评审机器人专项
 
 | 机器人 | 关注点 | 应对 |
@@ -188,3 +203,32 @@ Please review #A first.
 - 跨仓礼仪 → [`skills/community-etiquette`](../skills/community-etiquette/SKILL.md)：维护者关系长期经营与跨仓库口碑。
 - 关联手册：提交规范见 [`commit-pr-conventions.md`](commit-pr-conventions.md)（独立 commit 门禁），真实案例见 [`merged-pr-gold-cases.md`](merged-pr-gold-cases.md)。
 - 层次边界：本篇是**收到反馈后的可执行 SOP**，不替代 pr-review 的策略，也不替代 community-etiquette 的软规则。
+
+## 15. 维护者接管 PR 分支时（Maintainer Takeover）
+
+> 实战来源：openclaw/openclaw #165310。终局维护者（steipete）直接往贡献者 PR 分支推 commit，
+> 用 queue-based 方案替换了原 deferral 实现，并自写 PR body、自推修复、触发 re-review 后 squash 合并。
+> 这一场景在开源协作里常见，但极易让贡献者误操作（抢实现、强行 rebase），本篇给出正确姿态。
+
+### 识别信号
+- PR 分支出现 maintainer 的 commit（非你推送）。
+- PR body 被重写为维护者口吻，或 finding 状态被维护者直接清掉。
+- 维护者在评论里给出自己的修复方向，或直接改了你的实现。
+
+### 正确姿态（铁律）
+1. **不 rebase、不抢实现**：维护者改的方案以他的为准。AGENTS.md 通常禁止"仅因 main 前进而 rebase"，
+   且维护者往往已把 main 并入你的分支——此时 rebase 只会制造冲突、冲掉他的改动。
+2. **退居辅助**：仅在被**显式要求**时补 proof / 复评所需材料（如 BEFORE/AFTER 终端输出、对照先例）。
+   不要主动再推修复 commit 去覆盖维护者的实现。
+3. **等待是正确动作**：维护者正主动主导该 PR（自写 body、自推修复、proof in progress）时，
+   贡献者最优动作就是等待，而不是反复 ping 或重新提交。
+4. **本地分支落后先 ff-only**：`git fetch && git merge --ff-only`，不要 `--force`。
+5. **合并后致谢**：简短感谢 review 时间，不邀功、不争论。
+
+### 反模式
+| 反模式 | 后果 |
+|---|---|
+| 在维护者改过的实现上再推 commit 覆盖 | 冲突、激怒维护者、被认为不配合 |
+| 因 main 前进而 rebase PR 分支 | 冲掉维护者并入的改动，破坏 review 线程 |
+| 在评论里争"我的方案更好" | 维护者觉得难协作，降低下次合入信任 |
+| 反复 at 维护者催合并 | 被视为骚扰 |
