@@ -121,7 +121,7 @@ GET /repos/{owner}/{repo}/issues/{n}/timeline?per_page=100
   -> source.issue.pull_request.merged_at  +  source.issue.state
 ```
 
-可直接调用本 skill 根目录的 `scripts/scan_issue_claims.py`（相对本文件为 `../../scripts/`）批量执行该判定。
+可直接调用本 skill 根目录的 [scripts/scan_issue_claims.py](../../scripts/scan_issue_claims.py)（相对本文件为 `../../scripts/`）批量执行该判定。
 
 ## ⚠️ 认知陷阱：queueable-fix 池会饱和
 
@@ -138,7 +138,7 @@ GET /repos/{owner}/{repo}/issues/{n}/timeline?per_page=100
 
 应对：
 
-1. **先精确判定，再投入**：用 `scripts/scan_issue_claims.py` 做四分类，只对 `CLEAN` / `ATTEMPTED` 投入。不要相信 `linked:pr` 和裸 `state` 字段。
+1. **先精确判定，再投入**：用 [scripts/scan_issue_claims.py](../../scripts/scan_issue_claims.py) 做四分类，只对 `CLEAN` / `ATTEMPTED` 投入。不要相信 `linked:pr` 和裸 `state` 字段。
 2. **抢速度**：只盯最新 queueable-fix 单，小时级内提交，否则必被抢。
 3. **换池**：转向竞争小、杠杆高的需求类标签，例如 `clawsweeper:needs-live-repro`（提供可靠 live 复现 + 根因分析即可建立信任，不必先写代码）与 `needs-info`。
 4. **避开负向标签**：`no-new-fix-pr`（明确不要新修复 PR）、`linked-pr-open`（已有 PR）。注意：**缺负向标签 ≠ 可做**，负向标签本身也滞后。

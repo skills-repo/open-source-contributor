@@ -20,9 +20,9 @@
 
 - `SKILL.md` — 唯一入口，只做能力路由（本文件）
 - `references/` — 深层 playbook：首次贡献决策、提交规范自检、评审应对 SOP
-- `skills/` — 4 个细粒度子技能，可单独安装
-- `scripts/` — `check_contribution.py` 提交规范自检（纯标准库、可复现）
-- `assets/` — PR 模板与提交规范配置
+- `skills/` — 5 个细粒度子技能，可单独安装
+- `scripts/` — `check_contribution.py` 提交规范自检 + Issue 五段式检查（纯标准库、可复现）
+- `assets/` — PR 模板、Issue 模板与提交规范配置
 
 渐进式加载：Agent 先读路由表，按需读取 `references/` 或 `skills/`，重复任务交给脚本。
 
@@ -31,6 +31,7 @@
 | 环节 | 技能 | 描述 | 来源 |
 |------|------|------|------|
 | 🔍 发现 | `issue-finder` | 智能 Issue 发现：正向标签检测、优先级评分、多仓库搜索 | [衍生](https://clawhub.ai/skills/issue-finder) |
+| 🐛 报单 | `issue-creator` | 端到端报单：认可画像 → 缺陷挖掘 → 产出高认可度 Issue（source-repro 五段式） | 原创 |
 | 🔄 贡献 | `github-contribution` | Fork→Sync→Branch→Fix→PR 全流程自动化与最佳实践 | [衍生](https://clawhub.ai/skills/github-contribution) |
 | 👀 评审 | `pr-review` | PR Review 响应策略、自动化评审（ClawSweeper/Greptile）应对 | [衍生](https://clawhub.ai/skills/pr-review) |
 | 🤝 社区 | `community-etiquette` | 开源社区沟通规范、贡献指南遵循、维护者关系 | [衍生](https://skills.sh/daymade/claude-code-skills/github-contributor) |
@@ -44,6 +45,7 @@ npx skills add skills-repo/open-source-contributor -g -y
 # 单技能安装 —— 只要某一个细粒度能力
 npx skills add skills-repo/open-source-contributor@github-contribution -g -y
 npx skills add skills-repo/open-source-contributor@issue-finder -g -y
+npx skills add skills-repo/open-source-contributor@issue-creator -g -y
 npx skills add skills-repo/open-source-contributor@pr-review -g -y
 npx skills add skills-repo/open-source-contributor@community-etiquette -g -y
 ```

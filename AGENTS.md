@@ -15,11 +15,12 @@ open-source-contributor/
 │   └── review-response-playbook.md
 ├── skills/               # L3 细粒度子技能：可单独 npx skills add
 │   ├── issue-finder/SKILL.md
+│   ├── issue-creator/SKILL.md
 │   ├── github-contribution/SKILL.md
 │   ├── pr-review/SKILL.md
 │   └── community-etiquette/SKILL.md
-├── scripts/              # L4 确定性脚本：check_contribution.py（提交规范自检）
-├── assets/               # L5 模板资源：PULL_REQUEST_TEMPLATE.md / commit_conventions.json
+├── scripts/              # L4 确定性脚本：check_contribution.py（提交规范自检 + Issue 五段式检查）
+├── assets/               # L5 模板资源：PULL_REQUEST_TEMPLATE.md / ISSUE_TEMPLATE.md / commit_conventions.json
 ├── AGENTS.md             # 本文件
 ├── README.md             # 面向人类的项目文档
 ├── LICENSE               # MIT

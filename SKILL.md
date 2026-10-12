@@ -2,11 +2,11 @@
 name: open-source-contributor
 description: >-
   把 AI 变成开源贡献搭档：从选题立项、Fork 同步、语义化提交到 PR 评审应对的全流程护航。
-  覆盖首次贡献决策、commit/PR/CONTRIBUTING 规范自检、自动化评审机器人应对。
-  触发词："开源贡献"、"提 PR"、"first contribution"、"commit 规范"、"评审反馈"、"CONTRIBUTING"。
+  覆盖首次贡献决策、commit/PR/CONTRIBUTING 规范自检、找 bug 报高认可度 Issue、自动化评审机器人应对。
+  触发词："开源贡献"、"提 PR"、"first contribution"、"commit 规范"、"报 Issue"、"找 bug"、"评审反馈"、"CONTRIBUTING"。
 agent_created: true
 metadata:
-  version: 1.0.0
+  version: 1.1.0
   category: 开源贡献
   difficulty: 进阶
   architecture: superpower
@@ -22,6 +22,7 @@ metadata:
 ## 何时使用
 
 - 想给某个开源项目提第一个 PR，不知道从哪入手
+- 不想只挑别人报剩的 issue，想自己从代码里挖缺陷、报出被维护者认可的 issue
 - 写好了改动，但不确定 commit message / PR 描述是否规范
 - PR 收到维护者或自动化机器人（ClawSweeper/Greptile）的反馈，需要应对
 - 要检查仓库 CONTRIBUTING.md 是否完整、是否符合社区门槛
@@ -36,6 +37,8 @@ metadata:
 | 应对评审反馈、自动化机器人、回复话术 | [references/review-response-playbook.md](references/review-response-playbook.md) | 评审 review 反馈 机器人 维护者 反驳 拆分 |
 | 用近期已合并 PR 校准 scope、proof、兼容和评审判断 | [references/merged-pr-gold-cases.md](references/merged-pr-gold-cases.md) | merged PR gold case OpenClaw owner proof exact-head |
 | 发现高价值 Issue、正向标签与优先级评分 | [skills/issue-finder/SKILL.md](skills/issue-finder/SKILL.md) | issue 发现 标签 优先级 good first queueable |
+| 从认可样本归纳本仓库 issue 画像（gold cases） | [skills/issue-creator/SKILL.md](skills/issue-creator/SKILL.md) | 认可画像 正向标签归纳 gold case |
+| main 代码缺陷挖掘与高认可度报 Issue | [skills/issue-creator/SKILL.md](skills/issue-creator/SKILL.md) | 缺陷挖掘 找bug 报issue 复现 根因 |
 | Fork 预检→分支→修复→PR 全流程与 Proof | [skills/github-contribution/SKILL.md](skills/github-contribution/SKILL.md) | Fork 预检 分支 PR owner exact-head proof |
 | 社区沟通规范、CONTRIBUTING 解读、AI 披露 | [skills/community-etiquette/SKILL.md](skills/community-etiquette/SKILL.md) | 社区礼仪 CONTRIBUTING PR描述 AI披露 维护者 |
 | PR Review 响应策略与反馈分类 | [skills/pr-review/SKILL.md](skills/pr-review/SKILL.md) | PR review 响应 自动化 分类 conversation |
@@ -48,6 +51,7 @@ metadata:
 - `scripts/check_contribution.py commit --file <msg>` — 检查 commit 格式/关联 issue/行长
 - `scripts/check_contribution.py contributing --file CONTRIBUTING.md` — 检查必含章节
 - `scripts/check_contribution.py pr --file <pr_body>` — 检查 PR 描述覆盖模板章节
+- `scripts/check_contribution.py issue --file <issue_body>` — 检查 Issue 正文五段式完整度（模板驱动 + 语义规则）
 - `scripts/check_contribution.py selfcheck` — 校验内置资产（配置+模板）0 ERROR
 
 运行示例：
@@ -62,6 +66,7 @@ python3 scripts/check_contribution.py commit --file /tmp/msg.txt
 `assets/` 提供可直接套用的规范与模板：
 
 - [assets/PULL_REQUEST_TEMPLATE.md](assets/PULL_REQUEST_TEMPLATE.md) — PR 描述模板（脚本 `pr` 模式以其 `##` 章节为必检项）
+- [assets/ISSUE_TEMPLATE.md](assets/ISSUE_TEMPLATE.md) — Issue 正文五段式骨架（脚本 `issue` 模式以其 `##` 章节为必检项，附 Environment/Steps/Evidence 语义规则）
 - [assets/commit_conventions.json](assets/commit_conventions.json) — 提交规范配置（脚本 `commit`/`contributing` 的规则来源，可团队自定义）
 
 ## 核心原则（始终遵循）

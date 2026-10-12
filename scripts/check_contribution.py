@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """check_contribution.py — 开源贡献提交规范检查器（纯标准库，零依赖）
 
-检查三类对象，提交前自检可挡掉大部分"被打回重写"：
+检查四类对象，提交前自检可挡掉大部分"被打回重写"：
   commit       单条 commit message 的格式 / 关联 issue / 行长
   contributing  仓库 CONTRIBUTING.md 的必含章节完整性
   pr           PR 描述对模板(assets/PULL_REQUEST_TEMPLATE.md)章节的覆盖度
+  issue        Issue 正文五段式完整度（模板 assets/ISSUE_TEMPLATE.md 驱动 + 语义规则）
   selfcheck    校验内置资产（配置 + 模板）应为 0 ERROR —— 资产与脚本互相验证
 
 规则来源：assets/commit_conventions.json（配置驱动，便于团队自定义）。
@@ -18,6 +19,7 @@ PR 必检章节来源：assets/PULL_REQUEST_TEMPLATE.md 的 `##` 标题（模板
   python3 check_contribution.py commit --message "fix(parser): handle EOF"
   python3 check_contribution.py contributing --file CONTRIBUTING.md
   python3 check_contribution.py pr --file /tmp/pr_body.md
+  python3 check_contribution.py issue --file /tmp/issue_body.md
   python3 check_contribution.py selfcheck
   python3 check_contribution.py --help
 """
@@ -31,6 +33,7 @@ import sys
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _DEFAULT_CONFIG = os.path.join(_HERE, "..", "assets", "commit_conventions.json")
 _DEFAULT_TEMPLATE = os.path.join(_HERE, "..", "assets", "PULL_REQUEST_TEMPLATE.md")
+_DEFAULT_ISSUE_TEMPLATE = os.path.join(_HERE, "..", "assets", "ISSUE_TEMPLATE.md")
 
 
 def _load_config(path):
@@ -128,6 +131,82 @@ def _check_pr(body_text, template_path, cfg):
     return errors
 
 
+# Issue 语义规则常量（与 assets/ISSUE_TEMPLATE.md 互为验证，改动须同步）
+_UNVERIFIED_ISSUE_PHRASES = [
+    "应该可以复现", "应该能复现", "应该可复现", "大概率能", "肯定能复现", "一定能复现",
+    "should be reproducible", "should reproduce",
+]
+_ISSUE_PLACEHOLDERS = ["TODO", "待补充", "FIXME"]
+_VERSION_OR_SHA_RE = re.compile(r"(\b[0-9a-f]{7,40}\b|\d+\.\d+(?:\.\d+)?)", re.IGNORECASE)
+_EXPECTED_ACTUAL_RE = re.compile(r"(期望|实际|expected|actual)", re.IGNORECASE)
+
+
+def _split_sections(text):
+    """按 `##` 标题切分 markdown，返回 [(heading, content), ...]（不含首个标题前的引导内容）。"""
+    matches = list(re.finditer(r"^##\s+(.+?)\s*$", text, re.MULTILINE))
+    sections = []
+    for i, m in enumerate(matches):
+        start = m.end()
+        end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+        sections.append((m.group(1).strip(), text[start:end]))
+    return sections
+
+
+def _issue_required_sections(template_path):
+    """Issue 模板 `##` 标题即必检段落（模板驱动，与 pr 模式同构）。"""
+    return _template_sections(template_path)
+
+
+def _issue_section_content(sections, *keywords):
+    """按关键字（任一命中 heading 即可）取段落内容；段落不存在返回 None。"""
+    for kw in keywords:
+        for heading, content in sections:
+            if kw.lower() in heading.lower():
+                return content
+    return None
+
+
+def _check_issue(text, template_path, cfg):
+    """Issue 正文检查：五段齐全 + Environment 可定位 + Steps 期望/实际 + Evidence 非空且已验证 + 无占位符。"""
+    errors = []
+    heads = _issue_required_sections(template_path)
+    if not heads:
+        errors.append(f"Issue 模板无 `##` 章节: {template_path}")
+        return errors
+    low = text.lower()
+    for h in heads:
+        if h.lower() not in low:
+            errors.append(f"Issue 缺少段落: {h}")
+    sections = _split_sections(text)
+
+    # Environment：须含版本号或 commit SHA（复现可定位的前提）
+    env = _issue_section_content(sections, "Environment", "环境")
+    if env is not None and not _VERSION_OR_SHA_RE.search(env):
+        errors.append("环境 (Environment) 未含版本号或 commit SHA（复现不可定位）")
+
+    # Steps：须含期望/实际对照
+    steps = _issue_section_content(sections, "Steps to Reproduce", "复现步骤")
+    if steps is not None and not _EXPECTED_ACTUAL_RE.search(steps):
+        errors.append("复现步骤 (Steps to Reproduce) 缺少 期望/实际（Expected/Actual）对照")
+
+    # Evidence：非空，且不得含"应该可以复现"类未验证措辞
+    evidence = _issue_section_content(sections, "Evidence", "证据")
+    if evidence is not None:
+        if not evidence.strip():
+            errors.append("证据 (Evidence) 段落为空（须贴 transcript / 日志 / file:line 机制链）")
+        else:
+            for phrase in _UNVERIFIED_ISSUE_PHRASES:
+                if phrase.lower() in evidence.lower():
+                    errors.append(f"证据 (Evidence) 含未验证措辞「{phrase}」——只写确已发生的复现")
+                    break
+
+    # 全文不得残留占位符
+    for ph in _ISSUE_PLACEHOLDERS:
+        if ph.lower() in low:
+            errors.append(f"Issue 残留占位符: {ph}")
+    return errors
+
+
 def _read_file_or_die(path):
     if not os.path.isfile(path):
         sys.stderr.write(f"[ERROR] 文件不存在: {path}\n")
@@ -138,10 +217,12 @@ def _read_file_or_die(path):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(
-        description="开源贡献提交规范检查器（commit / contributing / pr / selfcheck）"
+        description="开源贡献提交规范检查器（commit / contributing / pr / issue / selfcheck）"
     )
     ap.add_argument("--config", default=_DEFAULT_CONFIG, help="规则配置 JSON 路径")
     ap.add_argument("--template", default=_DEFAULT_TEMPLATE, help="PR 模板 MD 路径")
+    ap.add_argument("--issue-template", default=_DEFAULT_ISSUE_TEMPLATE,
+                    help="Issue 模板 MD 路径")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     p_commit = sub.add_parser("commit", help="检查 commit message")
@@ -154,6 +235,9 @@ def main(argv=None):
 
     p_pr = sub.add_parser("pr", help="检查 PR 描述对模板的覆盖度")
     p_pr.add_argument("--file", required=True, help="PR 描述文件路径")
+
+    p_issue = sub.add_parser("issue", help="检查 Issue 正文的五段式完整度")
+    p_issue.add_argument("--file", required=True, help="Issue 正文文件路径")
 
     sub.add_parser("selfcheck", help="校验内置资产（配置+模板）应为 0 ERROR")
 
@@ -172,7 +256,22 @@ def main(argv=None):
         pr_err = _check_pr(tpl_text, args.template, cfg)
         print(f"[selfcheck] 用模板回检自身 PR 章节 : "
               f"{'0 ERROR' if not pr_err else pr_err}")
-        total = len(cerr) + len(tpl_err) + len(pr_err)
+        # Issue 模板回检（五段式语义规则与模板互为验证）
+        itpl_err = []
+        issue_err = []
+        if os.path.isfile(args.issue_template):
+            iheads = _template_sections(args.issue_template)
+            itpl_err = [] if iheads else [f"Issue 模板无章节: {args.issue_template}"]
+            print(f"[selfcheck] Issue 模板 {os.path.relpath(args.issue_template)} : "
+                  f"{len(iheads)} 个章节 {'OK' if not itpl_err else itpl_err}")
+            issue_err = _check_issue(_read_file_or_die(args.issue_template),
+                                     args.issue_template, cfg)
+            print(f"[selfcheck] Issue 模板回检五段式规则 : "
+                  f"{'0 ERROR' if not issue_err else issue_err}")
+        else:
+            itpl_err = [f"Issue 模板不存在: {args.issue_template}"]
+            print(f"[selfcheck] Issue 模板 {os.path.relpath(args.issue_template)} : {itpl_err}")
+        total = len(cerr) + len(tpl_err) + len(pr_err) + len(itpl_err) + len(issue_err)
         if total == 0:
             print("[selfcheck] PASS — 资产与脚本互相验证通过（0 ERROR）")
             return 0
@@ -216,6 +315,17 @@ def main(argv=None):
             print(f"\nPR 检查未通过：{len(errs)} 项")
             return 1
         print("PR 检查通过：0 ERROR")
+        return 0
+
+    if args.cmd == "issue":
+        text = _read_file_or_die(args.file)
+        errs = _check_issue(text, args.issue_template, cfg)
+        if errs:
+            for e in errs:
+                print(f"ERROR: {e}")
+            print(f"\nIssue 检查未通过：{len(errs)} 项")
+            return 1
+        print("Issue 检查通过：0 ERROR")
         return 0
 
     return 2
