@@ -11,10 +11,12 @@
 Token 来源（按顺序）: $GITHUB_TOKEN / $GH_TOKEN / 当前目录仓库 git remote 内嵌凭据。
 Token 不会被打印。
 
-为什么要这个脚本（三个易踩的坑）:
+为什么要这个脚本（四个易踩的坑）:
   1. search 的 `-linked:pr` 只索引 Fixes/Closes 关键字建立的链接，会漏判人工引用的 PR。
   2. 已合并 PR 的 `state` 字段同样是 "closed"，必须用 pull_request.merged_at 判定。
   3. MERGED 只代表"疑似已修复"——issue 常在修复合并后不被关闭，须回到 HEAD 复核代码。
+  4. 标签干净 ≠ 可做：assignee 非空 = 已指派的维护者工作（ClawSweeper 评语通常是
+     "retain it without dispatching competing work"），同样不该抢。
 """
 from __future__ import annotations
 
@@ -78,7 +80,12 @@ class Client:
 
 
 def classify(client: Client, repo: str, num: int):
-    """返回 (num, bucket, prs)。bucket ∈ CLEAN/ATTEMPTED/MERGED/CLAIMED/ERROR。"""
+    """返回 (num, bucket, prs)。bucket ∈ ASSIGNED/CLEAN/ATTEMPTED/MERGED/CLAIMED/ERROR。"""
+    issue = client.get(f"/repos/{repo}/issues/{num}")
+    if isinstance(issue, dict) and "__error__" in issue:
+        return num, "ERROR", [issue["__error__"]]
+    assignees = [a.get("login", "") for a in issue.get("assignees", []) if a.get("login")]
+
     tl = client.get(f"/repos/{repo}/issues/{num}/timeline?per_page=100")
     if isinstance(tl, dict) and "__error__" in tl:
         return num, "ERROR", [tl["__error__"]]
@@ -105,17 +112,20 @@ def classify(client: Client, repo: str, num: int):
         return num, "MERGED", merged_prs
     if closed_prs:
         return num, "ATTEMPTED", closed_prs
+    if assignees:  # 陷阱 4: 无 PR 但已指派 = 维护者认领的工作
+        return num, "ASSIGNED", [f"assignee: {', '.join(assignees)}"]
     return num, "CLEAN", []
 
 
 LABELS = {
-    "CLEAN": "从未有 PR —— 竞争最低，首选（仍须复核代码确认缺陷存在）",
+    "CLEAN": "从未有 PR 且无 assignee —— 竞争最低，首选（仍须复核代码确认缺陷存在）",
+    "ASSIGNED": "无 PR 但已指派 assignee —— 维护者认领的工作，勿派竞争实现",
     "ATTEMPTED": "仅有未合并 PR —— 查前次为何被拒/搁置，再决定",
     "MERGED": "存在已合并 PR —— 疑似已修复，必须回 HEAD 复核",
     "CLAIMED": "存在 open PR —— 已被认领，放弃",
     "ERROR": "查询失败",
 }
-ORDER = ["CLEAN", "ATTEMPTED", "MERGED", "CLAIMED", "ERROR"]
+ORDER = ["CLEAN", "ASSIGNED", "ATTEMPTED", "MERGED", "CLAIMED", "ERROR"]
 
 
 def main() -> None:
