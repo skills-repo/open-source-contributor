@@ -108,7 +108,7 @@ issue 常常在修复合并后**不被关闭**（尤其在自动化仓库里）�
 
 在 `openclaw/openclaw` 的 enhancement 池扫描中，5 个"无任何负向标签"的 issue（#133522/#133531/#133537/#133538/#133541）实际全部 `assignees=[vyctorbrzezowski]`，ClawSweeper 评语为 **"retain it without dispatching competing work"**（保留、勿派竞争工作）。只看标签会把它们误判为首选。
 
-正确做法：判定 CLEAN 前必须读 issue 本体的 `assignees` 字段（非空 = 已指派维护工作，跳过）。`scripts/scan_issue_claims.py` 已内置该检查，输出新增 `ASSIGNED` 桶。
+正确做法：判定 CLEAN 前必须读 issue 本体的 `assignees` 字段（非空 = 已指派维护工作，跳过）。[scripts/scan_issue_claims.py](../../scripts/scan_issue_claims.py) 已内置该检查，输出新增 `ASSIGNED` 桶。
 
 ### 正确的五分类
 
