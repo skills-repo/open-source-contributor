@@ -20,7 +20,7 @@
 
 - `SKILL.md` — 唯一入口，只做能力路由（本文件）
 - `references/` — 深层 playbook：首次贡献决策、提交规范自检、评审应对 SOP
-- `skills/` — 5 个细粒度子技能，可单独安装
+- `skills/` — 6 个细粒度子技能，可单独安装
 - `scripts/` — `check_contribution.py` 提交规范自检 + Issue 五段式检查（纯标准库、可复现）
 - `assets/` — PR 模板、Issue 模板与提交规范配置
 
@@ -35,6 +35,7 @@
 | 🔄 贡献 | `github-contribution` | Fork→Sync→Branch→Fix→PR 全流程自动化与最佳实践 | [衍生](https://clawhub.ai/skills/github-contribution) |
 | 👀 评审 | `pr-review` | PR Review 响应策略、自动化评审（ClawSweeper/Greptile）应对 | [衍生](https://clawhub.ai/skills/pr-review) |
 | 🤝 社区 | `community-etiquette` | 开源社区沟通规范、贡献指南遵循、维护者关系 | [衍生](https://skills.sh/daymade/claude-code-skills/github-contributor) |
+| 🚀 落地 | `pr-landing-monitor` | PR 提交后动态监控与迭代修复：CI 收敛盯守、失败双 checkout 归因分流、评审补强、merge-ready 推进 | [衍生](https://skills.sh/spencerpauly/awesome-cursor-skills/babysitting-pr) |
 
 ## 安装
 
@@ -48,6 +49,7 @@ npx skills add skills-repo/open-source-contributor@issue-finder -g -y
 npx skills add skills-repo/open-source-contributor@issue-creator -g -y
 npx skills add skills-repo/open-source-contributor@pr-review -g -y
 npx skills add skills-repo/open-source-contributor@community-etiquette -g -y
+npx skills add skills-repo/open-source-contributor@pr-landing-monitor -g -y
 ```
 
 ## 推荐工作流
