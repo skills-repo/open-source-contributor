@@ -5,8 +5,8 @@ source:
   type: derived
   repo: skills-repo/open-source-contributor
   path: skills/pr-landing-monitor/SKILL.md
-  version: 1.0.0
-  updated: 2026-10-17
+  version: 1.1.0
+  updated: 2026-10-18
   url: https://skills.sh/spencerpauly/awesome-cursor-skills/babysitting-pr
 metadata:
   category: 监控+迭代

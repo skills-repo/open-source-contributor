@@ -31,6 +31,16 @@
 - `merged_at` 非空 / `state=closed`：报告终态，**停止对该 PR 的一切迭代**（只留归档观察）。
 - `mergeable_state=clean` 且无 Before-merge 待办、无新失败：报告"可合并"，转入低频观察——**不催维护者，不 bump**（合并节奏归维护者）。
 
+## 合并阶段：维护者怎么接手、署名怎么保留（2026-10-17 #175058 实战复盘）
+
+openclaw PR #175058（本仓库首个被合并贡献，初评到 merge 全程 3h41m）验证的合并期事实：
+
+- **维护者可能直接在你的分支上迭代再 squash**（steipete 原话 "Maintainer cleanup ... preserving the contributor's follow-up"）。分支必须始终处于可接手状态：commit 干净且语义化、测试/类型全绿、每轮迭代有说明评论——维护者接手成本趋近于零时，合并就是当天的事。**响应速度即合并速度**。
+- **合并可能没有任何 formal APPROVED review**：本例 reviews 为空，维护者直接决策、merge bot 执行（评论带 `openclaw-merge` 注释）。别把"等 APPROVED"当必经步骤，盯维护者评论与 re-review 推进即可。
+- **合并条件的真实构成**：评审 Before-merge 清单清零 + CI 全绿 + 维护者对代码面满意。**live proof 的定位是说服评审**（"needs real behavior proof" → 满足后放行），**CI 才是 merge gate**——维护者原话 "PR CI is the test proof per maintainer policy; live proof and local tests/typechecks were intentionally skipped"。两者都做，但别混淆定位。
+- **API 面会被收敛**：我方在 stream 层加的 `flush(allowRecovery)` 参数被删，判定逻辑上移到 compat resolver（净 −20 行）。给管线加能力时：**判定上移既有 owner、不在下游加接口**，否则维护者会替你收掉。
+- **署名靠 commit message 保留**：squash 会把贡献 commit 的 message 逐条收进 landed 正文，`Co-authored-by` 由 git 生成——commit message 质量（why + 机制 + 引用 finding）就是署名的载体。
+
 ## 无人值守固化（automation/cron）
 
 把监控循环固化成定时任务时，prompt/脚本必须**自包含**（未来运行看不到今天的对话）：

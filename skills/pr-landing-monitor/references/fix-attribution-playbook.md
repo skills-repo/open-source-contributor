@@ -41,7 +41,8 @@ git checkout -q <pr-branch>
 2. **本地验证盲区**：
    - `tsgo -p tsconfig.core.json` **不覆盖测试文件**——测试类型要跑 CI 同款 `test/tsconfig/*.test.*.json`；
    - **re-export 转发会构成运行时值循环**——有 import-cycle 架构守卫的 repo（如 openclaw）直接红，本地 tsgo/vitest 不报，只有 CI guards 抓；
-   - **切分支后 node_modules 陈旧制造假类型错误**（workspace 外部依赖版本漂移）——先 `pnpm install --frozen-lockfile` 再跑类型。
+   - **切分支后 node_modules 陈旧制造假类型错误**（workspace 外部依赖版本漂移）——先 `pnpm install --frozen-lockfile` 再跑类型；
+   - **union 类型集合与返回类型盲区**——`Set<ToolCallBlock>.has()` 拒绝 union 元素（`TextContent | ThinkingContent | ToolCall`）、未标注的返回类型让 plain-text 分支把 kind 拓宽成 string 导致 union 拒收。这两类错误本地 tsgo 不报、评审机器人会抓（实例：#175058 rev→rev2 自动化修正）→ union 相关的集合泛型与返回类型必须显式标注。
 3. **评审批次误归因**：评审引用的 "repair" 可能来自 merge 后状态而非你的 diff（实例：`tools.ts line-budget` 实为 upstream 提交把文件推过 max-lines）——**拉日志/本地复现核实再动手**，别按评审措辞直接改。
 4. **CI 红先双 checkout 再归因**：一次对照实验即可闭环，比反复拉日志快。
 5. **merged ≠ closed ≠ fixed**：定性历史 issue 状态时读 `pull_request.merged_at`，别只看 state。
