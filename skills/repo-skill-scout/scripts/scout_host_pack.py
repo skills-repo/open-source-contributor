@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.12
+#!/usr/bin/env python3
 """Scout a host repository's own Agent instruction layer and skill pack.
 
 Read-only. Deterministic, stdlib-only. Reproduces the manual reconnaissance of

@@ -63,6 +63,8 @@ scoped 子目录指令、以及成体系的技能包（`.agents/skills/`、`.cla
 
 ```bash
 python3 scripts/scout_host_pack.py /path/to/target-repo --skills --anchors
+# macOS 上 /usr/bin/python3 可能被 Xcode CLT 许可提示拦住；脚本只用标准库，
+# 换任意用户态解释器即可：~/.local/bin/python3.12 scripts/scout_host_pack.py <repo>
 ```
 
 ### 1. 定位指令层
