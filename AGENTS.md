@@ -9,12 +9,14 @@
 ```
 open-source-contributor/
 ├── SKILL.md              # L1 路由层：唯一入口，只做索引，不写方法论
-├── references/           # L2 深层 playbook：决策树/规范/评审 SOP（按需加载）
+├── references/           # L2 深层 playbook：决策树/规范/评审 SOP/feature 价值判据（按需加载）
 │   ├── first-contribution-playbook.md
 │   ├── commit-pr-conventions.md
 │   └── review-response-playbook.md
 ├── skills/               # L3 细粒度子技能：可单独 npx skills add
 │   ├── issue-finder/SKILL.md
+│   ├── discussion-scout/SKILL.md
+│   ├── feature-proposer/SKILL.md
 │   ├── issue-creator/SKILL.md
 │   ├── github-contribution/SKILL.md
 │   ├── pr-review/SKILL.md

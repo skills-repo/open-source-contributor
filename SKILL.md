@@ -6,7 +6,7 @@ description: >-
   触发词："开源贡献"、"提 PR"、"first contribution"、"commit 规范"、"报 Issue"、"找 bug"、"评审反馈"、"CONTRIBUTING"。
 agent_created: true
 metadata:
-  version: 1.2.0
+  version: 1.3.0
   category: 开源贡献
   difficulty: 进阶
   architecture: superpower
@@ -22,6 +22,7 @@ metadata:
 ## 何时使用
 
 - 想给某个开源项目提第一个 PR，不知道从哪入手
+- 想从项目讨论区里挖出还没变成 issue 的 feature 需求，并判断现在值不值得做
 - 不想只挑别人报剩的 issue，想自己从代码里挖缺陷、报出被维护者认可的 issue
 - 写好了改动，但不确定 commit message / PR 描述是否规范
 - PR 收到维护者或自动化机器人（ClawSweeper/Greptile）的反馈，需要应对
@@ -37,6 +38,9 @@ metadata:
 | 应对评审反馈、自动化机器人、回复话术 | [references/review-response-playbook.md](references/review-response-playbook.md) | 评审 review 反馈 机器人 维护者 反驳 拆分 |
 | 用近期已合并 PR 校准 scope、proof、兼容和评审判断 | [references/merged-pr-gold-cases.md](references/merged-pr-gold-cases.md) | merged PR gold case OpenClaw owner proof exact-head |
 | 发现高价值 Issue、正向标签与优先级评分 | [skills/issue-finder/SKILL.md](skills/issue-finder/SKILL.md) | issue 发现 标签 优先级 good first queueable |
+| 挖掘讨论区、判断 feature 值不值得做 | [skills/discussion-scout/SKILL.md](skills/discussion-scout/SKILL.md) | 讨论区 discussion ideas 需求挖掘 feature 价值 立项 养需求 |
+| 发讨论帖 / 提 feature issue 并回评验证 | [skills/feature-proposer/SKILL.md](skills/feature-proposer/SKILL.md) | feature request 提案 验证 正向标签 维护者认可 createDiscussion |
+| feature 判据与验证阶梯（跨子技能元决策） | [references/feature-value-playbook.md](references/feature-value-playbook.md) | 立题五问 决策树 V4 roadmap workaround 查重 |
 | 从认可样本归纳本仓库 issue 画像（gold cases） | [skills/issue-creator/SKILL.md](skills/issue-creator/SKILL.md) | 认可画像 正向标签归纳 gold case |
 | main 代码缺陷挖掘与高认可度报 Issue | [skills/issue-creator/SKILL.md](skills/issue-creator/SKILL.md) | 缺陷挖掘 找bug 报issue 复现 根因 |
 | Fork 预检→分支→修复→PR 全流程与 Proof | [skills/github-contribution/SKILL.md](skills/github-contribution/SKILL.md) | Fork 预检 分支 PR owner exact-head proof |
@@ -55,6 +59,7 @@ metadata:
 - `scripts/check_contribution.py pr --file <pr_body>` — 检查 PR 描述覆盖模板章节
 - `scripts/check_contribution.py issue --file <issue_body>` — 检查 Issue 正文五段式完整度（模板驱动 + 语义规则）
 - `scripts/check_contribution.py selfcheck` — 校验内置资产（配置+模板）0 ERROR
+- `scripts/mine_discussions.py --repo <o>/<r> --category ideas --top 8` — **讨论区挖掘与 feature 打分**：逐仓枚举（Search API 搜不到 discussion）、客户端过滤（REST `category`/`sort` 静默失效）、按社区热度+维护者下场输出 V1–V3 候选表。`--list-categories` 先看本仓分类，`--dup-check` 做 issue 查重。
 
 运行示例：
 

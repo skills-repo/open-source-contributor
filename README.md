@@ -19,9 +19,9 @@
 本仓库采用 skills-repo 组织的 **superpower 架构**：
 
 - `SKILL.md` — 唯一入口，只做能力路由（本文件）
-- `references/` — 深层 playbook：首次贡献决策、提交规范自检、评审应对 SOP
-- `skills/` — 6 个细粒度子技能，可单独安装
-- `scripts/` — `check_contribution.py` 提交规范自检 + Issue 五段式检查（纯标准库、可复现）
+- `references/` — 深层 playbook：首次贡献决策、提交规范自检、评审应对 SOP、feature 价值判据与验证阶梯
+- `skills/` — 8 个细粒度子技能，可单独安装
+- `scripts/` — `check_contribution.py` 提交规范自检 + Issue 五段式检查；`mine_discussions.py` 讨论区挖掘与 feature 打分（纯标准库 + `gh`，可复现）
 - `assets/` — PR 模板、Issue 模板与提交规范配置
 
 渐进式加载：Agent 先读路由表，按需读取 `references/` 或 `skills/`，重复任务交给脚本。
@@ -30,6 +30,8 @@
 
 | 环节 | 技能 | 描述 | 来源 |
 |------|------|------|------|
+| 🧭 侦察 | `discussion-scout` | 挖掘项目讨论区，提炼还没变成 issue 的 feature 线索，按社区热度与维护者态度判定开发价值（V1–V3） | 原创 |
+| 📣 提案 | `feature-proposer` | 把判过价值的 feature 落成讨论帖 / feature request issue，再用高级正向标签 + 维护者认可回评验证（V4 才放行写码） | [衍生](https://github.com/paulrberg/agent-skills/blob/main/skills/yeet/SKILL.md) |
 | 🔍 发现 | `issue-finder` | 智能 Issue 发现：正向标签检测、优先级评分、多仓库搜索 | [衍生](https://clawhub.ai/skills/issue-finder) |
 | 🐛 报单 | `issue-creator` | 端到端报单：认可画像 → 缺陷挖掘 → 产出高认可度 Issue（source-repro 五段式） | 原创 |
 | 🔄 贡献 | `github-contribution` | Fork→Sync→Branch→Fix→PR 全流程自动化与最佳实践 | [衍生](https://clawhub.ai/skills/github-contribution) |
@@ -50,10 +52,13 @@ npx skills add skills-repo/open-source-contributor@issue-creator -g -y
 npx skills add skills-repo/open-source-contributor@pr-review -g -y
 npx skills add skills-repo/open-source-contributor@community-etiquette -g -y
 npx skills add skills-repo/open-source-contributor@pr-landing-monitor -g -y
+npx skills add skills-repo/open-source-contributor@discussion-scout -g -y
+npx skills add skills-repo/open-source-contributor@feature-proposer -g -y
 ```
 
 ## 推荐工作流
 
+# A. 缺陷/已有 issue 路径
 ```
 Issue 发现 → Fork 同步 → 变更计划 → 开发修复 → PR 提交 → 评审应对 → 合并清理
 issue-      github-      change      github-    github-   pr-        github-
@@ -63,3 +68,13 @@ finder      contribution  plan        contribution contribution review     contr
 ## 许可
 
 MIT
+
+```
+讨论区挖掘 → 价值判定 → 发提案(讨论帖/feature issue) → 回评验证 → 才写代码
+discussion-  feature-     feature-            标签+维护者    github-
+ scout        value        proposer            V4 才放行      contribution
+              playbook
+```
+
+> 硬门禁：**只有拿到 V4（本仓 feature 类正向标签 + OWNER/MEMBER/COLLABORATOR 明确认可回复）**
+> 才允许进入编码。社区点赞多（V2/V3）只养帖，不动代码——feature 的价值由维护者愿不愿合决定。
