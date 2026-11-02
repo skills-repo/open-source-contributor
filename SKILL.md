@@ -59,7 +59,7 @@ metadata:
 - `scripts/check_contribution.py pr --file <pr_body>` — 检查 PR 描述覆盖模板章节
 - `scripts/check_contribution.py issue --file <issue_body>` — 检查 Issue 正文五段式完整度（模板驱动 + 语义规则）
 - `scripts/check_contribution.py selfcheck` — 校验内置资产（配置+模板）0 ERROR
-- `scripts/mine_discussions.py --repo <o>/<r> --category ideas --top 8` — **讨论区挖掘与 feature 打分**：逐仓枚举（Search API 搜不到 discussion）、客户端过滤（REST `category`/`sort` 静默失效）、按社区热度+维护者下场输出 V1–V3 候选表。`--list-categories` 先看本仓分类，`--dup-check` 做 issue 查重。
+- `scripts/mine_discussions.py --repo <o>/<r> --category ideas --top 8` — **讨论区挖掘与 feature 打分**：逐仓枚举（Search API 搜不到 discussion）、客户端过滤（REST `category`/`sort` 静默失效）、按社区热度+维护者下场输出候选强度 C1–C3 表。`--list-categories` 先看本仓分类，`--dup-check` 做 issue 查重。
 
 运行示例：
 

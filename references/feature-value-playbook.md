@@ -23,12 +23,12 @@ D2: 这个诉求已成文吗？（issue 搜索 + Ideas 分类去重）
  └─ 未见成文 → D3
 
 D3: 维护者表态过吗？（读讨论帖评论的 author_association）
- ├─ OWNER/MEMBER/COLLABORATOR 正面 → 直接进入验证（V3+）
+ ├─ OWNER/MEMBER/COLLABORATOR 正面 → 候选 C3，进入验证（预期拿到 V3+）
  ├─ 维护者负面/暂缓（"not a priority"/"out of scope"/"we plan to…"）→ 放弃
  └─ 无人回应 → D4
 
 D4: 社区热度够吗？（upvoteCount 扣自建票，评论数，非作者参与人数）
- ├─ upvote ≥10 或 评论 ≥5 → 值得养帖：发讨论帖测温度，不提 PR
+ ├─ upvote ≥10 或 评论 ≥5 → 候选 C2/C3，值得养帖：发讨论帖测温度，不提 PR
  └─ 都低 → 观察或放弃（你的判断缺外部支撑，别硬做）
 
 D5: 官方 roadmap 是否明确反对？

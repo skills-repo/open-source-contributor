@@ -30,7 +30,7 @@
 
 | 环节 | 技能 | 描述 | 来源 |
 |------|------|------|------|
-| 🧭 侦察 | `discussion-scout` | 挖掘项目讨论区，提炼还没变成 issue 的 feature 线索，按社区热度与维护者态度判定开发价值（V1–V3） | 原创 |
+| 🧭 侦察 | `discussion-scout` | 挖掘项目讨论区，提炼还没变成 issue 的 feature 线索，按社区热度与维护者态度判定开发价值（候选强度 C1–C3） | 原创 |
 | 📣 提案 | `feature-proposer` | 把判过价值的 feature 落成讨论帖 / feature request issue，再用高级正向标签 + 维护者认可回评验证（V4 才放行写码） | [衍生](https://github.com/paulrberg/agent-skills/blob/main/skills/yeet/SKILL.md) |
 | 🔍 发现 | `issue-finder` | 智能 Issue 发现：正向标签检测、优先级评分、多仓库搜索 | [衍生](https://clawhub.ai/skills/issue-finder) |
 | 🐛 报单 | `issue-creator` | 端到端报单：认可画像 → 缺陷挖掘 → 产出高认可度 Issue（source-repro 五段式） | 原创 |

@@ -115,17 +115,20 @@ def score(d, assoc, since_days, self_upvote):
     return max(0, min(100, s)), up, cm, bool(maintainer)
 
 
-def ladder(sc, maintainer, answered, closed):
+def grade(sc, maintainer, answered, closed):
+    """候选强度 C1-C3 —— 与 feature-proposer 的验证阶梯 V1-V4 是**两个轴**：
+    C 档说的是"讨论区里这条线索有多热"，V 档说的是"我发出去的提案被维护者
+    背书到什么程度"。只有 V4 才放行写代码；C3 不等于可以做。"""
     if closed:
         return "SKIP"
     if answered:
-        return "ANSWERED"
+        return "ANSW"
     if maintainer and sc >= 45:
-        return "V3"
+        return "C3"
     if sc >= 60:
-        return "V2"
+        return "C2"
     if sc >= 35:
-        return "V1"
+        return "C1"
     return "NOISE"
 
 
@@ -176,7 +179,7 @@ def main():
                     "labels": [l["name"] for l in (d.get("labels") or {}).get("nodes", [])],
                     "maintainer_replied": maint,
                     "answered": d.get("isAnswered"), "score": sc,
-                    "tier": ladder(sc, maint, d.get("isAnswered"), d.get("closed")),
+                    "grade": grade(sc, maint, d.get("isAnswered"), d.get("closed")),
                 }
                 if args.dup_check:
                     item["similar_issues"] = dup_issues(repo, d["title"])
@@ -193,14 +196,14 @@ def main():
     if not rows:
         print("无候选：该仓讨论区没有匹配分类的开放帖，或被过滤光。")
         return 0
-    print(f"{'tier':<5}{'score':<7}{'up':<4}{'cmt':<5}{'maint':<6}{'repo#':<12}title")
+    print(f"{'grade':<6}{'score':<6}{'up':<4}{'cmt':<5}{'maint':<6}{'repo':<15}title")
     print("-" * 100)
     for x in rows:
-        print(f"{x['tier']:<6}{x['score']:<6}{x['upvotes']:<4}{x['comments']:<5}"
+        print(f"{x['grade']:<6}{x['score']:<6}{x['upvotes']:<4}{x['comments']:<5}"
               f"{'Y' if x['maintainer_replied'] else '-':<6}"
               f"#{x['number']:<6}{x['repo'].split('/')[1][:14]:<15}{x['title'][:40]}")
-    print("\n下一步：tier=V3 且无 similar_issues 重复 → 用 skills/feature-proposer "
-          "发讨论帖或直接提 feature issue 做验证。")
+    print("\n下一步：grade=C3/C2 且 similar_issues 为空 → 用 skills/feature-proposer 发提案验证；"
+          "grade 只是讨论区热度，放行写码要的是验证阶梯 V4（维护者标签 + 认可回复）。\n")
     return 0
 
 

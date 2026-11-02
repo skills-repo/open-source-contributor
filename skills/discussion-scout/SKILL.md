@@ -26,7 +26,7 @@ metadata:
 ## 能力
 
 - **讨论区挖掘**：按分类（Ideas / Feature request / General / RFC）拉取开放讨论帖，提取潜在 feature 线索
-- **价值判定**：社区热度（upvote / 评论 / eyes）+ 维护者是否下场 + 新鲜度 + 重复度，输出 V1–V3 分级
+- **价值判定**：社区热度（upvote / 评论 / eyes）+ 维护者是否下场 + 新鲜度 + 重复度，输出候选强度 C1–C3
 - **重复拦截**：同一诉求是否已成文为 issue（常已在 Ideas 分类或旧 issue 里出现过）
 - **验证路径决策**：该发讨论帖养需求，还是直接提 feature issue 试探
 
@@ -69,14 +69,18 @@ GraphQL 字段是 **`upvoteCount`**（不是 `upCount`）、Discussion **无 `st
 5. 用下方判据独立复核，不要只信分数
 ```
 
-## feature 价值判据（独立判断，不外包给热度）
+## feature 价值判据（候选强度 C0–C3，独立判断、不外包给热度）
 
 | 级别 | 判定 | 行动 |
 |---|---|---|
-| **V3 值得做** | 维护者（OWNER/MEMBER/COLLABORATOR）已下场且态度非否定，且 `upvoteCount ≥ 5`、无重复 issue | 进 `feature-proposer` 提验证 issue |
-| **V2 有需求无背书** | 社区热度够（upvote ≥ 10 或评论 ≥ 5）但维护者未回应 | 先**养讨论帖**（`feature-proposer` 路径 A），不提 PR |
-| **V1 边缘** | 热度低、或帖子 >365 天陈旧、或与已合并实现部分重叠 | 观察，不投入 |
-| **V0 否决** | 被 `closed`/`stateReason=duplicate|resolved`、被标 `wontfix`/`rejected`/`needs-more-info`、或维护者明确反对 | 放弃并换候选 |
+| **C3 值得做** | 维护者（OWNER/MEMBER/COLLABORATOR）已下场且态度非否定，且 `upvoteCount ≥ 5`、无重复 issue | 进 `feature-proposer` 提验证 issue |
+| **C2 有需求无背书** | 社区热度够（upvote ≥ 10 或评论 ≥ 5）但维护者未回应 | 先**养讨论帖**（`feature-proposer` 路径 A），不提 PR |
+| **C1 边缘** | 热度低、或帖子 >365 天陈旧、或与已合并实现部分重叠 | 观察，不投入 |
+| **C0 否决** |
+
+> **两个轴别混**：本篇 **C0–C3 = 候选强度**（这条线索有多热，脚本输出同此）；
+> `feature-proposer` 的 **V1–V4 = 验证阶梯**（我发出去的提案被背书到什么程度）。
+> **C3 ≠ 可以开工**，放行写代码只认 V4。 被 `closed`/`stateReason=duplicate|resolved`、被标 `wontfix`/`rejected`/`needs-more-info`、或维护者明确反对 | 放弃并换候选 |
 
 **借用判据一 · Opportunity Score**（源 `phuryn/pm-skills@analyze-feature-requests`，2.8K 安装）：
 `机会分 = 重要度 × (1 − 现有满意度)`。重要度看场景普遍性与阻塞代价，满意度看 workaround 是否已够用——
