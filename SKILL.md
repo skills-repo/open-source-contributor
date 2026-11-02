@@ -6,7 +6,7 @@ description: >-
   触发词："开源贡献"、"提 PR"、"first contribution"、"commit 规范"、"报 Issue"、"找 bug"、"评审反馈"、"CONTRIBUTING"。
 agent_created: true
 metadata:
-  version: 1.3.0
+  version: 1.4.0
   category: 开源贡献
   difficulty: 进阶
   architecture: superpower
@@ -22,6 +22,7 @@ metadata:
 ## 何时使用
 
 - 想给某个开源项目提第一个 PR，不知道从哪入手
+- 目标仓库自带 Agent 规则层（`AGENTS.md` / `.agents/skills` / `.claude/skills`），动手前需要先读懂它的约束与权限边界
 - 想从项目讨论区里挖出还没变成 issue 的 feature 需求，并判断现在值不值得做
 - 不想只挑别人报剩的 issue，想自己从代码里挖缺陷、报出被维护者认可的 issue
 - 写好了改动，但不确定 commit message / PR 描述是否规范
@@ -37,6 +38,7 @@ metadata:
 | commit / PR / CONTRIBUTING 规范自检与量化规则 | [references/commit-pr-conventions.md](references/commit-pr-conventions.md) | 提交规范 commit PR 模板 CONTRIBUTING 约定 语义化 |
 | 应对评审反馈、自动化机器人、回复话术 | [references/review-response-playbook.md](references/review-response-playbook.md) | 评审 review 反馈 机器人 维护者 反驳 拆分 |
 | 用近期已合并 PR 校准 scope、proof、兼容和评审判断 | [references/merged-pr-gold-cases.md](references/merged-pr-gold-cases.md) | merged PR gold case OpenClaw owner proof exact-head |
+| 侦察宿主仓库自带的 Agent 规则层与技能包（先服从合约再动手） | [skills/repo-skill-scout/SKILL.md](skills/repo-skill-scout/SKILL.md) | AGENTS.md .agents/skills CLAUDE.md 规则层 路由表 只读契约 权限二分 |
 | 发现高价值 Issue、正向标签与优先级评分 | [skills/issue-finder/SKILL.md](skills/issue-finder/SKILL.md) | issue 发现 标签 优先级 good first queueable |
 | 挖掘讨论区、判断 feature 值不值得做 | [skills/discussion-scout/SKILL.md](skills/discussion-scout/SKILL.md) | 讨论区 discussion ideas 需求挖掘 feature 价值 立项 养需求 |
 | 发讨论帖 / 提 feature issue 并回评验证 | [skills/feature-proposer/SKILL.md](skills/feature-proposer/SKILL.md) | feature request 提案 验证 正向标签 维护者认可 createDiscussion |
