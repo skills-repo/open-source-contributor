@@ -31,7 +31,7 @@
 | 环节 | 技能 | 描述 | 来源 |
 |------|------|------|------|
 | 🧭 侦察 | `discussion-scout` | 挖掘项目讨论区，提炼还没变成 issue 的 feature 线索，按社区热度与维护者态度判定开发价值（候选强度 C1–C3） | 原创 |
-| 📐 合规 | `repo-skill-scout` | 侦察宿主仓库自带的 Agent 规则层与技能包（`AGENTS.md` / `.agents/skills` / `.claude/skills`），重建"场景→先读哪条规则"的路由表，并按权限二分决定哪些能执行、哪些只读契约 | [衍生](https://raw.githubusercontent.com/samber/developer-relations-skills/main/skills/oss-contributor-onboarding/SKILL.md) |
+| 📐 合规 | `repo-skill-scout` | 侦察宿主仓库自带的 Agent 规则层与技能包（`AGENTS.md` / `.agents/skills` / `.claude/skills`）：`scout_host_pack.py` 一次给出技能清单、路由深链、跨技能枢纽与 A/B/C 权限三分，再用角色×槽位映射决定"这类活该用哪个、读到哪一节" | [衍生](https://raw.githubusercontent.com/samber/developer-relations-skills/main/skills/oss-contributor-onboarding/SKILL.md) |
 | 📣 提案 | `feature-proposer` | 把判过价值的 feature 落成讨论帖 / feature request issue，再用高级正向标签 + 维护者认可回评验证（V4 才放行写码） | [衍生](https://github.com/paulrberg/agent-skills/blob/main/skills/yeet/SKILL.md) |
 | 🔍 发现 | `issue-finder` | 智能 Issue 发现：正向标签检测、优先级评分、多仓库搜索 | [衍生](https://clawhub.ai/skills/issue-finder) |
 | 🐛 报单 | `issue-creator` | 端到端报单：认可画像 → 缺陷挖掘 → 产出高认可度 Issue（source-repro 五段式） | 原创 |

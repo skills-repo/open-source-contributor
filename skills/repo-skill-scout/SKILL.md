@@ -57,6 +57,14 @@ scoped 子目录指令、以及成体系的技能包（`.agents/skills/`、`.cla
 
 ## 侦察工作流
 
+> **确定性入口**：`scripts/scout_host_pack.py <repo>` 一次跑完下面五步（纯标准库、只读），
+> 输出指令层清单、技能数与中心 README、路由深链命中量、跨技能入链枢纽、以及 A/B/C 权限分档。
+> 手工命令保留用于单点复核与脚本没有覆盖的判读。
+
+```bash
+python3 scripts/scout_host_pack.py /path/to/target-repo --skills --anchors
+```
+
 ### 1. 定位指令层
 
 ```bash
@@ -102,14 +110,24 @@ grep -c '\.agents/skills/' AGENTS.md CONTRIBUTING.md 2>/dev/null
 把每条命中整理成 `场景 → 技能#小节 → 强制程度（first / obey / follow）` 三列。
 **锚点必须保留**：`SKILL.md#proof-policy` 和整份 `SKILL.md` 不是同一个东西，前者才是验收条款。
 
-### 4. 按权限二分（贡献者最关键的一步）
+### 4. 按权限三分（贡献者最关键的一步）
 
-| 类别 | 判据 | 你的正确用法 |
+| 档 | 判据 | 你的正确用法 |
 |---|---|---|
-| **可执行** | 不需要私有凭证、不碰 live 状态、作用域在你自己的 fork/工作区 | 直接调用，产出即 PR 证据 |
-| **只读契约** | 描述里出现 maintainer/release/advisory/live/deploy/租凭凭证/team 等；或需要他人系统权限 | **读它的验收标准来塑造你的改动**，绝不执行写操作 |
+| **A 改共享状态** | 描述含发布/签名/落地/合并/批量关闭/triage/advisory/workflow 容量等**改变他人可见状态**的动词 | **只读它的验收标准来塑造改动**，绝不执行；误执行是外部贡献者最大的信任事故 |
+| **B 需他人凭证或私档** | credential/lease/OAuth/租用 bot/内部 IM 归档/desktop app/test server/operator | 通常无法执行；读它才知道"维护者期望看到什么证据" |
+| **C 无闸** | 作用域在你自己的 fork/工作区 | 直接执行，产出即 PR 证据 |
 
-误执行只读契约类技能（发布、live 更新、批量关闭）是外部贡献者最容易踩的信任事故。
+关键坑（脚本已内置处理，手工判读时同样适用）：
+
+- **子串误命中**：`lease` 藏在 `release` 里、`live` 藏在 `delivery` 里。必须用词边界匹配，
+  否则会把 `openclaw-testing` 这类"贡献者最该用"的技能误投禁区，让你白白少用一半能力。
+- **否定句反转**：`not for archive search` 里的 `archive` 表达的是**让位**，不是门禁。
+  只有出现在关键词**之前**的否定才算反转（`check credentials without a Gateway` 仍是凭证门）。
+- 分档是**提示不是判决**：输出会打印命中的原文片段，逐条复核后再决定。
+
+填完分档后，把结果对进 [references/role-usage-map.md](references/role-usage-map.md) 的槽位表，
+得到"我这类活该用哪几个、读到哪一节"的用法映射。
 
 ### 5. 落成动手前 checklist
 
@@ -121,6 +139,8 @@ grep -c '\.agents/skills/' AGENTS.md CONTRIBUTING.md 2>/dev/null
 
 ## 判读补充
 
+- **别名目录会让技能数翻倍**：常见 `.claude/skills → ../.agents/skills`（实测如此）。
+  按 `realpath` 去重后再计数，否则你会以为仓库有两套包并做出错误判读。
 - **没有中心索引是常态**。很多技能包不带 README；协作关系只存在于 description 与相对链接里，
   需要自己重建，重建结果写进 PR 描述可以显著提高评审效率。
 - **文档反向指回技能**也要抓：`CONTRIBUTING.md`、`docs/ci.md` 里指向技能的链接，
@@ -138,6 +158,9 @@ grep -c '\.agents/skills/' AGENTS.md CONTRIBUTING.md 2>/dev/null
 - 第 3 类协议的原文："One owner per responsibility" / "One owner, complete cutover"
 - **无 `.agents/skills/README.md`**：中心索引确实缺失，靠 description + 深链重建
 - 外部 PR 最难的一关（行为证据必须来自 shipped entry point，而非 mock/隔离测试）就是从这里的一条规则长出来的
+- 脚本一次跑完的分档结果：**A 改共享状态 17 个 / B 需凭证或私档 15 个 / C 无闸 22 个（合计 54）**；
+  54 个里只有 **5 个**在 description 里显式写了边界句——说明"读 description 判边界"能覆盖的是少数，
+  其余仍需按关键词与正文复核
 
 ## 反模式
 
@@ -155,6 +178,9 @@ grep -c '\.agents/skills/' AGENTS.md CONTRIBUTING.md 2>/dev/null
 
 ## 衔接
 
+- **使用说明本体**（角色×槽位映射、使用深度三档、只读禁区清单、复用规则）
+  → [references/role-usage-map.md](references/role-usage-map.md)
+- **确定性入口** → [scripts/scout_host_pack.py](scripts/scout_host_pack.py)
 - 人的需求信号 → `discussion-scout`；机器/规则信号 → 本技能
 - 被评审打回后归因 → `pr-review` + `pr-landing-monitor`（先确认是不是本技能漏读的规则）
 - 报 issue 引用规则 → `issue-creator`（Evidence 段落可直接贴本技能重建的路由表）
