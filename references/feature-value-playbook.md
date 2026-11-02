@@ -14,8 +14,11 @@
 
 ```
 D1: 仓库开启了 Discussions 吗？（hasDiscussionsEnabled）
- ├─ 否 → 本链路失效，退回 issue-finder 扫 issue 池
- └─ 是 → D2
+ ├─ 是 → 走 Discussions 通道（--mode discussions）
+ └─ 否 → **不要放弃**：改走 feature 标签 issue 通道（--mode issues）
+          先 gh api repos/<o>/<r>/labels 列本仓真实 feature 类标签，再检索开放 issue
+          评论串同样能读维护者立场（issues/<n>/comments 的 author_association）
+ → D2
 
 D2: 这个诉求已成文吗？（issue 搜索 + Ideas 分类去重）
  ├─ 已有 open issue 且带正向标签 → 不是空白，改做"认领已有"，走 issue-finder
@@ -80,6 +83,10 @@ D5: 官方 roadmap 是否明确反对？
 | 9 | 写路径：`createDiscussion(input:{repositoryId,categoryId,title,body})`（**不接受 `discussionCategoryId`**）、`addDiscussionComment(input:{discussionId,body})`、`deleteDiscussion(input:{id})`；REST 评论 POST → **404** | 写只能 GraphQL，且入参必须 `input` 包裹 |
 | 10 | 新帖创建者自带 1 票（`upvoteCount` 初始 = 1），`authorAssociation=MEMBER` | 打分须扣自建票，否则自证热度 |
 | 11 | `hasDiscussionsEnabled` 是硬性 pre-flight；开启需 `PATCH -f has_discussions=true`（需管理权限） | 第三方仓多半没开，别假设可用 |
+| 12 | **过半主流项目未开 Discussions**（实测 vscode / cargo / kubernetes / openclaw = false，next.js / deno = true） | 必须双通道，无 Discussions 时挖 feature 标签 issue 评论串 |
+| 13 | **`author_association` 低估维护者**：vscode 核心团队 `joaomoreno`/`jrieken` 仅报 `CONTRIBUTOR` | V4 判据要交叉 CODEOWNERS 与近期提交者，不能只看该字段 |
+| 14 | **`gh api search/issues -f q=...` 返回 404**，同一查询 URL 编码进路径才通 | 脚本里 search 一律走 `search/issues?q=<urlencode>` |
+| 15 | **标签名各仓不同且会漂移**：vscode 现行 `feature-request`（旧名 `Feature Request` 返 **0**）；cargo 用 `C-feature-request`；k8s 用 `kind/feature`，正文在独立仓 `kubernetes/enhancements`（KEP） | 先列本仓标签再检索，跨仓照抄标签名必错 |
 
 ## 5. 重复检测（发帖前必做）
 
@@ -102,7 +109,10 @@ gh search code --repo <o>/<r> "<能力关键词>" --limit 5
 |---|---|
 | 把方案当问题写，第一句就是"建议加个 --foo 参数" | 先写"做不到什么 + 代价"，方案后置 |
 | 一开口要整个能力 | 主动切最小片，声明"我先做 A" |
-| 把社区点赞当维护者认可 | V2 不许开工，只许养帖 |
+| 把社区点赞当维护者认可 | C2 不许开工，只许养帖 |
+| 认定"项目没开 Discussions = 没有讨论区" | 过半主流项目没开（vscode/cargo/k8s/openclaw），需求在 feature 标签 issue 的评论串里 |
+| 只用 `author_association` 判定维护者 | 核心团队可能只报 CONTRIBUTOR（vscode 实测），须交叉 CODEOWNERS + 提交史 |
+| 用 `gh api search/issues -f q=...` | 实测 404；必须把查询 URL 编码进路径 |
 | 自己发帖自己 +1 当成热度 | 扣 1 票（`--self-upvote`） |
 | 向第三方仓发测试帖 | 只在自有仓测，测后 `deleteDiscussion` 清理 |
 | 发了就忘 | 7 天 / 14 天两个复查点，用 `pr-landing-monitor` 的盯守思路挂个定时 |

@@ -13,6 +13,7 @@ import json
 import re
 import subprocess
 import sys
+import urllib.parse
 
 FEATURE_HINTS = re.compile(
     r"\b(feat(ure)?|add|support|allow|enable|want|need|would be (great|nice)|"
@@ -28,6 +29,15 @@ def run_gh(args):
     if p.returncode != 0:
         raise RuntimeError(p.stderr.strip() or "gh failed")
     return json.loads(p.stdout) if p.stdout.strip() else None
+
+
+def run_gh_lines(args):
+    """`--jq` 输出的是纯文本行而非 JSON —— 用 json.loads 会抛错并被上层 except 吞成空结果。
+    凡带 --jq 的调用都走这里。"""
+    p = subprocess.run(["gh"] + args, capture_output=True, text=True)
+    if p.returncode != 0:
+        raise RuntimeError(p.stderr.strip() or "gh failed")
+    return [l.strip() for l in (p.stdout or "").splitlines() if l.strip()]
 
 
 def repo_ids(repo):
@@ -80,8 +90,8 @@ def dup_issues(repo, title, limit=3):
     if not kw:
         return []
     try:
-        d = run_gh(["api", "search/issues",
-                    "-f", f"q=repo:{repo} {kw} is:issue", "-F", "per_page=5"])
+        d = run_gh(["api", "search/issues?q=" +
+                    urllib.parse.quote(f"repo:{repo} {kw} is:issue") + "&per_page=5"])
     except Exception:
         return []
     out = []
@@ -132,9 +142,106 @@ def grade(sc, maintainer, answered, closed):
     return "NOISE"
 
 
+FEATURE_LABEL_PRIORITY = [
+    "kind/feature", "c-feature-request", "c-enhancement", "feature request",
+    "feature-request", "enhancement", "area-feature", "proposal", "ideas",
+    "a-features", "help wanted", "roadmap", "request-for-comment", "rfc",
+]
+LABEL_NOISE = re.compile(
+    r"changes-requested|verification-requested|request-failed|awaiting|"
+    r"blocked-on|needs-reproduction|duplicate|design|ci|test", re.I)
+
+
+def detect_feature_labels(repo):
+    """列出本仓真实标签再按优先级挑 —— 标签名会漂移且各仓不同（vscode 现行
+    `feature-request`，旧名 `Feature Request` 检索返回 0；cargo 用 `C-feature-request`），
+    绝不能照抄别仓名字。"""
+    try:
+        lines = run_gh_lines(["api", f"repos/{repo}/labels", "--paginate",
+                              "--jq", ".[].name"])
+    except Exception as e:
+        print(f"WARN labels list: {e}", file=sys.stderr)
+        return []
+    cand = [n for n in lines if not LABEL_NOISE.search(n)]
+    picked = []
+    for token in FEATURE_LABEL_PRIORITY:
+        for n in cand:
+            low = n.lower()
+            if (low == token or low.startswith(token) or token in low) and n not in picked:
+                picked.append(n)
+                break
+    return picked[:4]
+
+
+def fetch_feature_issues(repo, labels, limit):
+    out = []
+    for lb in labels:
+        # 注意：`gh api search/issues -f q=...` 实测返回 404，必须把查询编进 URL 路径
+        quoted = f'"{lb}"' if " " in lb else lb
+        q = urllib.parse.quote(f"repo:{repo} is:issue is:open label:{quoted}")
+        try:
+            d = run_gh(["api",
+                        f"search/issues?q={q}&per_page={limit}&sort=comments&order=desc"])
+        except Exception as e:
+            print(f"WARN label '{lb}': {e}", file=sys.stderr)
+            continue
+        for it in (d.get("items") or []):
+            out.append(it)
+        if len(out) >= limit:
+            break
+    seen, uniq = set(), []
+    for it in out:
+        if it["number"] not in seen:
+            seen.add(it["number"]); uniq.append(it)
+    return uniq[:limit]
+
+
+def issue_comments(repo, number):
+    try:
+        rows = run_gh(["api", f"repos/{repo}/issues/{number}/comments?per_page=30"])
+    except Exception:
+        return []
+    return sorted({c.get("author_association", "NONE") for c in rows or []})
+
+
+def issue_commenters(repo, number):
+    """返回 (author_association 集合, 登录名集合)。
+    登录名用于和 CODEOWNERS/近期提交者交叉比对——因为 author_association 会低估身份。"""
+    try:
+        rows = run_gh(["api", f"repos/{repo}/issues/{number}/comments?per_page=30"])
+    except Exception:
+        return [], []
+    rows = rows or []
+    return (sorted({c.get("author_association", "NONE") for c in rows}),
+            sorted({(c.get("user") or {}).get("login", "") for c in rows}))
+
+
+def codeowners_logins(repo):
+    """author_association 会**低估**维护者身份（实测 vscode 核心团队 joaomoreno/jrieken
+    仅报 CONTRIBUTOR）。用 CODEOWNERS + 近 200 commit 作者兜底识别真实维护者。"""
+    names = set()
+    try:
+        raw = run_gh(["api", f"repos/{repo}/contents/CODEOWNERS", "--jq", ".content"])
+        import base64
+        txt = base64.b64decode(raw).decode("utf-8", "ignore")
+        names |= {w.lstrip("@").split("/")[0] for line in txt.splitlines()
+                  if line.strip() and not line.startswith("#")
+                  for w in line.split() if w.startswith("@")}
+    except Exception:
+        pass
+    try:
+        logins = run_gh_lines(["api", f"repos/{repo}/commits?per_page=100", "--jq",
+                               ".[].author.login // empty"])
+        names |= {x.strip() for x in logins if x.strip()}
+    except Exception:
+        pass
+    return names
+
 def main():
     ap = argparse.ArgumentParser(
-        description="挖掘 GitHub Discussions 中的 feature 线索并打分（输出候选表）")
+        description="挖掘项目讨论区中的 feature 线索并打分（GitHub Discussions 或 feature 标签 issue 两种通道）")
+    ap.add_argument("--mode", choices=["auto", "discussions", "issues"], default="auto",
+                    help="auto=有 Discussions 用 Discussions，否则退回 feature 标签 issue（实测 6 个主流项目 4 个未开 Discussions）")
     ap.add_argument("--repo", action="append", required=True,
                     help="owner/name，可重复以逐仓扫描（Search API 搜不到 discussion，只能逐仓）")
     ap.add_argument("--category", action="append", default=[],
@@ -153,26 +260,65 @@ def main():
     try:
         for repo in args.repo:
             meta = repo_ids(repo)
-            if not meta.get("hasDiscussionsEnabled"):
-                print(f"WARN {repo}: hasDiscussionsEnabled=false，跳过", file=sys.stderr)
+            enabled = bool(meta.get("hasDiscussionsEnabled"))
+            use_issues = (args.mode == "issues") or (args.mode == "auto" and not enabled)
+            if use_issues:
+                print(f"NOTE {repo}: 未开启 Discussions（或指定 issues），改用 feature 标签 issue 通道",
+                      file=sys.stderr)
+            if use_issues:
+                labels = detect_feature_labels(repo)
+                if not labels:
+                    print(f"WARN {repo}: 没识别出 feature 类标签，"
+                          f"先跑 gh api repos/{repo}/labels --paginate --jq '.[].name' 人工确认",
+                          file=sys.stderr)
+                    continue
+                print(f"NOTE {repo}: 采用标签 {labels}", file=sys.stderr)
+                owners = codeowners_logins(repo)
+                for it in fetch_feature_issues(repo, labels, args.limit):
+                    reactions = it.get("reactions") or {}
+                    cm = it.get("comments", 0) or 0
+                    up = reactions.get("+1", 0) or 0
+                    assocs, logins = issue_commenters(repo, it["number"])
+                    maint = bool({"OWNER", "MEMBER", "COLLABORATOR"} & set(assocs)) or bool(
+                        owners & set(logins))
+                    fake = {"upvoteCount": up + 1, "comments": {"totalCount": cm},
+                            "createdAt": it.get("created_at", ""), "closed": False,
+                            "isAnswered": False, "reactionGroups": [],
+                            "title": it.get("title", "")}
+                    sc, _, _, _ = score(fake, assocs, args.since_days, False)
+                    item = {
+                        "repo": repo, "number": it["number"], "channel": "issues",
+                        "category": ",".join(
+                            l["name"] for l in (it.get("labels") or [])[:3])[:20],
+                        "title": (it.get("title") or "")[:70], "url": it.get("html_url"),
+                        "upvotes": up, "comments": cm,
+                        "labels": [l["name"] for l in (it.get("labels") or [])],
+                        "maintainer_replied": maint, "answered": False, "score": sc,
+                        "grade": grade(sc, maint, False, False),
+                    }
+                    if args.dup_check:
+                        item["similar_prs"] = []
+                    rows.append(item)
                 continue
+
             cats = categories(repo)
             if args.list_categories:
                 for c in cats:
                     print(f"{repo}  {c['slug']:<18} {c['name']}")
                 return 0
             slugs = {s.lower() for s in args.category}
+            owners = codeowners_logins(repo)
             for d in fetch_discussions(repo, args.limit):
                 if slugs and (d.get("category") or {}).get("slug", "").lower() not in slugs:
                     continue
-                assoc, maint = [], False
+                assoc = []
                 try:
                     assoc = maintainer_replies(repo, d["number"])
                 except Exception as e:
                     print(f"WARN comments #{d['number']}: {e}", file=sys.stderr)
                 sc, up, cm, maint = score(d, assoc, args.since_days, args.self_upvote)
                 item = {
-                    "repo": repo, "number": d["number"],
+                    "repo": repo, "number": d["number"], "channel": "discussions",
                     "category": (d.get("category") or {}).get("slug"),
                     "title": d["title"][:70], "url": d["url"],
                     "upvotes": up, "comments": cm,
@@ -196,10 +342,10 @@ def main():
     if not rows:
         print("无候选：该仓讨论区没有匹配分类的开放帖，或被过滤光。")
         return 0
-    print(f"{'grade':<6}{'score':<6}{'up':<4}{'cmt':<5}{'maint':<6}{'repo':<15}title")
+    print(f"{'grade':<6}{'score':<6}{'up':<7}{'cmt':<6}{'maint':<6}{'repo':<14}title")
     print("-" * 100)
     for x in rows:
-        print(f"{x['grade']:<6}{x['score']:<6}{x['upvotes']:<4}{x['comments']:<5}"
+        print(f"{x['grade']:<6}{x['score']:<6}{x['upvotes']:<7}{x['comments']:<6}"
               f"{'Y' if x['maintainer_replied'] else '-':<6}"
               f"#{x['number']:<6}{x['repo'].split('/')[1][:14]:<15}{x['title'][:40]}")
     print("\n下一步：grade=C3/C2 且 similar_issues 为空 → 用 skills/feature-proposer 发提案验证；"

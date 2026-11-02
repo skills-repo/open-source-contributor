@@ -79,7 +79,15 @@ gh api graphql -f query='query($o:String!,$r:String!){repository(owner:$o,name:$
 
 | 档 | 信号 | 取数 | 放行 |
 |---|---|---|---|
-| **V4 立项确认** | 本仓 feature 类正向标签（`enhancement`/`roadmap`/`accepting-pr`/`design-approved`）**且** OWNER/MEMBER/COLLABORATOR 明确认可回复 | `labels` + 评论 `author_association` | ✅ 唯一可进 `github-contribution` 写代码 |
+| **V4 立项确认** | 本仓 feature 类正向标签（`enhancement`/`roadmap`/`accepting-pr`/`design-approved`）**且** 认可回复来自**真实维护者** | `labels` + 评论者身份（见下） | ✅ 唯一可进 `github-contribution` 写代码 |
+
+> **别只信 `author_association`**：实测 vscode 核心团队账号仅报 `CONTRIBUTOR`，用它过滤会漏判真维护者。
+> 交叉比对 CODEOWNERS 与近期提交者：
+> ```bash
+> gh api repos/<o>/<r>/contents/CODEOWNERS --jq .content | base64 -d | grep -oE '@[A-Za-z0-9._-]+'
+> gh api "repos/<o>/<r>/commits?per_page=100" --jq '.[].author.login' | sort -u
+> ```
+> `scripts/mine_discussions.py` 已内置该比对（`codeowners_logins`）。
 | V3 强需求 | 正向标签 + `upvoteCount ≥ 10`（扣自建票）或 ≥5 名非作者参与者 | GraphQL `upvoteCount` | 只做 spike，不提 PR |
 | V2 待观察 | 有热度无维护者回应，>7 天 | 同上 | 继续养帖，不动代码 |
 | V1 否决 | `closed` + `stateReason=duplicate|not planned`、`wontfix`/`rejected`/`needs-more-info`、明确反对、或 14 天零回应 | `state`/`closed`/`labels` | 撤 proposal，回 `discussion-scout` 换候选 |

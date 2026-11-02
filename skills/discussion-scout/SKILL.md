@@ -44,7 +44,12 @@ metadata:
 1. **`gh` 没有 `discussions` 子命令**，且 **REST 写讨论帖返回 404** → 读走 REST/GraphQL，写只能走 GraphQL。
 2. **REST `?category=<id>` 被静默忽略**——过滤 Ideas 却返回 General/Q&A，而且 HTTP 200。必须客户端过滤。
 3. **REST `?sort=top` 同样静默忽略**，返回与无参数完全一致。"最热讨论"取不到，只能自己按信号排序。
-4. **Search API 搜不到 discussions**（`search/issues?q=...+is:discussion` → `total_count 0`；GraphQL `SearchType` 无 `DISCUSSION`）→ **无法跨仓扫描，只能逐仓枚举**。
+4. **Search API 搜不到 discussions**（`is:discussion` → `total_count 0`；GraphQL `SearchType` 无 `DISCUSSION`）→ **无法跨仓扫描，只能逐仓枚举**。
+5. **多数主流项目根本没开 Discussions**（实测 `openclaw/openclaw`、`microsoft/vscode`、`rust-lang/cargo`、
+   `kubernetes/kubernetes` 均 `has_discussions=false`；`vercel/next.js`、`denoland/deno` 为 true）。
+   只支持 Discussions 的技能会在过半真实目标上失效 → **必须有 feature 标签 issue 通道兜底**。
+6. **`author_association` 会低估维护者身份**：vscode 核心团队 `joaomoreno`/`jrieken` 只报 `CONTRIBUTOR`。
+   单靠 `OWNER|MEMBER|COLLABORATOR` 过滤会**漏掉真维护者**，须与 CODEOWNERS / 近期提交者交叉比对。
 
 补充：`/repos/{o}/{r}/discussion_categories` **不存在（404）**，分类清单只能走 GraphQL `discussionCategories`；
 GraphQL 字段是 **`upvoteCount`**（不是 `upCount`）、Discussion **无 `state`**（用 `closed`+`stateReason`）；
@@ -57,8 +62,9 @@ GraphQL 字段是 **`upvoteCount`**（不是 `upCount`）、Discussion **无 `st
    gh api graphql -f query='query($o:String!,$r:String!){repository(owner:$o,name:$r){hasDiscussionsEnabled}}' -f o=<owner> -f r=<repo>
    false → 本技能不适用，退回 issue-finder 走 issue 池
 
-2. 列分类（名称因仓库而异，先列再用，别照抄 slug）
+2. 选通道并看分类（`--mode auto`：有 Discussions 用它，否则自动走 feature 标签 issue）
    python3 scripts/mine_discussions.py --repo <owner>/<repo> --list-categories
+   python3 scripts/mine_discussions.py --repo <owner>/<repo> --mode issues   # 强制 issue 标签通道
 
 3. 挖掘 + 打分
    python3 scripts/mine_discussions.py --repo <owner>/<repo> --category ideas --top 8 --dup-check
@@ -89,6 +95,10 @@ workaround 越能凑合分越低。用它区分"很多人喊"与"真值得做"�
 **借用判据二 · 维护者拒绝原型**（源 `posit-dev/skills@maintainer-decline`）：把常见拒绝话术反读成合并概率——
 `out of scope` / `not a priority` / `we plan to…` / `use a plugin` / `duplicate of` / `needs more info` /
 `won't fix` / `breaking for users`。命中即降级；**别把 "we plan to" 当背书**。
+
+标签名**各仓不同且会漂移**，先列本仓标签再用（实测：vscode 现行 `feature-request`，旧名 `Feature Request`
+检索返回 **0**；cargo 用 `C-feature-request`/`C-enhancement`；kubernetes 用 `kind/feature`，
+且需求正文在独立仓 `kubernetes/enhancements`（KEP）里，讨论线索要去那里读）。
 
 打分是**筛候选**，不是**下结论**。下结论前必须自己回答 playbook 里的**立题五问（feature 版）**——
 尤其「这事没有官方能力会死吗」和「维护者的 roadmap 有没有明确反对方向」。
