@@ -37,8 +37,8 @@ scoped 子目录指令、以及成体系的技能包（`.agents/skills/`、`.cla
 ## 何时不用
 
 - 仓库没有 Agent 规则层 → 用 `community-etiquette` 走 CONTRIBUTING/模板路线
-- 需要判断"这个 feature 值不值得做" → 那是 `discussion-scout` + `references/feature-value-playbook.md`
-- 已被评审打回后要组织反驳话术 → `pr-review` / `references/review-response-playbook.md`
+- 需要判断"这个 feature 值不值得做" → 那是 `discussion-scout` + [references/feature-value-playbook.md](../../references/feature-value-playbook.md)
+- 已被评审打回后要组织反驳话术 → `pr-review` / [references/review-response-playbook.md](../../references/review-response-playbook.md)
 - 只想读代码架构 → 本技能只覆盖规则层，不做代码导览
 
 ## 核心命题：规则层的三处协议

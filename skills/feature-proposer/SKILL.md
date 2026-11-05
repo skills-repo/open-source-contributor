@@ -64,7 +64,7 @@ gh api graphql -f query='query($o:String!,$r:String!){repository(owner:$o,name:$
 
 ## 提案文书要求
 
-用 `assets/DISCUSSION_PROPOSAL_TEMPLATE.md`（讨论帖）或 `assets/FEATURE_ISSUE_TEMPLATE.md`（issue）。
+用 [assets/DISCUSSION_PROPOSAL_TEMPLATE.md](../../assets/DISCUSSION_PROPOSAL_TEMPLATE.md)（讨论帖）或 [assets/FEATURE_ISSUE_TEMPLATE.md](../../assets/FEATURE_ISSUE_TEMPLATE.md)（issue）。
 两者的硬要求相同，缺一项就不要发：
 
 1. **问题而非方案开头**：先讲"现在做不到什么、代价是什么"，方案放后面
@@ -87,7 +87,7 @@ gh api graphql -f query='query($o:String!,$r:String!){repository(owner:$o,name:$
 > gh api repos/<o>/<r>/contents/CODEOWNERS --jq .content | base64 -d | grep -oE '@[A-Za-z0-9._-]+'
 > gh api "repos/<o>/<r>/commits?per_page=100" --jq '.[].author.login' | sort -u
 > ```
-> `scripts/mine_discussions.py` 已内置该比对（`codeowners_logins`）。
+> [scripts/mine_discussions.py](../../scripts/mine_discussions.py) 已内置该比对（`codeowners_logins`）。
 | V3 强需求 | 正向标签 + `upvoteCount ≥ 10`（扣自建票）或 ≥5 名非作者参与者 | GraphQL `upvoteCount` | 只做 spike，不提 PR |
 | V2 待观察 | 有热度无维护者回应，>7 天 | 同上 | 继续养帖，不动代码 |
 | V1 否决 | `closed` + `stateReason=duplicate|not planned`、`wontfix`/`rejected`/`needs-more-info`、明确反对、或 14 天零回应 | `state`/`closed`/`labels` | 撤 proposal，回 `discussion-scout` 换候选 |

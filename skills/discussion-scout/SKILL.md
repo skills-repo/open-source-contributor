@@ -117,4 +117,4 @@ workaround 越能凑合分越低。用它区分"很多人喊"与"真值得做"�
 ## 参考
 
 - 判据展开与命令详解 → [`references/feature-value-playbook.md`](../../references/feature-value-playbook.md)
-- 讨论区/issue 写入模板 → `assets/DISCUSSION_PROPOSAL_TEMPLATE.md`、`assets/FEATURE_ISSUE_TEMPLATE.md`
+- 讨论区/issue 写入模板 → [assets/DISCUSSION_PROPOSAL_TEMPLATE.md](../../assets/DISCUSSION_PROPOSAL_TEMPLATE.md)、[assets/FEATURE_ISSUE_TEMPLATE.md](../../assets/FEATURE_ISSUE_TEMPLATE.md)
