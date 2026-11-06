@@ -75,6 +75,16 @@
     inline fixture 驱动真实 handler/store/admission 出真实状态迁移日志，并明确声明未验证边界
     （如 "No live Gateway was suspended, aborted, or restarted"）；不要求 live 部署 Gateway。
     成员级 PR 的重证明形态（#165854 的 Docker lane 完整用户流）不构成外部贡献的默认门槛。
+13. Generated artifact 的 diff 规模**不可凭直觉从源码位置推断**，必须重跑生成器实测。2026-11-06 实测：
+    把新 enum 成员从 `FAILOVER_REASONS` 中间移到末尾并重跑 `pnpm gateway:validators:gen`，
+    `predicates.js` diff 仅从 `+3188/−3186` 变为 `+3175/−3173`（-13 行）——生成器全量重排
+    `check_N` 编号，与源码插入位置无关。故 `size: XL` 不能靠「调整成员顺序」消除，改 head 只会作废 proof。
+14. Security / approval gate 的解锁条件要**读 guard 源码**，不能只读 bot 文案或 `gh pr checks`。
+    openclaw 的 `findMaintainerApproval`（`scripts/github/guard-review.mjs:479-507`）只认 maintainer
+    角色用户新发的、未编辑的 `/allow-security-sensitive-change` issue comment（须晚于 guard
+    `requestedAt`、非 PR 作者），**不认 PR review APPROVE**，也不认贡献者/bot 评论里对该字符串的引用
+    （字符串计数会被自己写的论证污染）。判断 PR 是否只剩 maintainer 动作，先查评论区作者分布与
+    `requestedAt` 之后的事件，比反复读 durable review 更快。
 
 ## 实时校准程序（每次立项/评审应对时执行）
 
