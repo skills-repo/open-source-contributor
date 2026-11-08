@@ -85,6 +85,32 @@
     `requestedAt`、非 PR 作者），**不认 PR review APPROVE**，也不认贡献者/bot 评论里对该字符串的引用
     （字符串计数会被自己写的论证污染）。判断 PR 是否只剩 maintainer 动作，先查评论区作者分布与
     `requestedAt` 之后的事件，比反复读 durable review 更快。
+15. **"测试证据" ≠ "external-PR behavior proof"**。2026-11-08 #189391 的 durable review 明确判：
+    "Section 3 exercises the real registry/controller and SQLite worker **through the regression test** …
+    it strengthens test evidence but does not satisfy the external-PR behavior gate"，且 Gateway/Matrix
+    trace 因"在 base 上也成功"被拒。达标形态是**脱离 test runner 的独立进程**（`node --import ./scripts/tsx.mjs`，
+    无 `vi`/fake timers/网关 mock），驱动 shipped 生产入口（如 `killSessionSubagentRuns`），贴**真实墙钟**
+    BEFORE/AFTER 脱敏终端日志，并补一条 sibling/拒绝路径证明没有 over-exclude。四象限最稳：
+    `SELF/EXTERNAL × HEAD/BASE`；BASE 负控只删一行修复并用 shell `trap` 恢复，跑完核对
+    `git status --short` 为空 + exact head 未变。
+16. 独立 proof harness 的三个硬坑（#189391 实证）：
+    - `settlesWithin(..., { ref: false })` 的 deadline 是 **unref'd timer**：独立进程无常驻句柄时 Node 直接
+      `unsettled top-level await` 退出，15s deadline 永不触发，BASE 看起来和 HEAD 一样快。必须显式加一个
+      `setInterval` 常驻服务句柄（等价生产里 Gateway listener/state worker 保活），并在 PR 里写明这不是
+      mock、也没有缩短 deadline。
+    - registry 读记录是 frozen 的（`freezeSubagentRunReadRecord`）：不要对 `subagentRuns.get(runId)` 原地赋
+      `suppressSessionEffects`/替换 `execution`，两种都会抛 `Cannot assign to read only property`。
+      更根本的是**别把 run 推进到错误状态**：发 lifecycle `phase:"end"` 会让它变 terminal，若
+      `hasRetainedWork` 为 false（未 bind gateway resolver），`prepareSessionSubagentKillSelection`
+      第一行就删掉该行 → `killed: 0`、`settleQueued` 根本不执行 → 负控无效。保持 held-disposal 的
+      non-terminal 状态才是真实故障态。
+    - 跨 worktree 复用 `node_modules` symlink 时常缺 `@solidjs/vite-plugin`（`vitest.shared.config.ts`
+      → `ui/config/control-ui-solid.ts` 顶层 import），Vitest 启动即 `ERR_MODULE_NOT_FOUND`，
+      HEAD/BASE 双跑都是 startup error。此时**不要去修共享依赖树或 lockfile**，改用独立 tsx harness。
+17. `gh pr edit --body-file` 只改正文、不改 head，所以补 proof 后 exact-head 证据仍然有效；
+    反之只要 push/rebase/集成 main 改动 head，就必须重跑全部象限、重建 body、再请求 re-review。
+    正文里要写清 Environment / Limits / Redaction / 精确命令，并显式解释"为什么 BASE 的
+    `status: ok` 就是故障"（不少 issue 的 complaint 正是"静默成功"）。
 
 ## 实时校准程序（每次立项/评审应对时执行）
 
