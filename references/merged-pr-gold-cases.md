@@ -129,6 +129,78 @@
       报告跃迁结果与剩余 maintainer 动作即可。要升档只能靠实质新证据类别（如独立 base/candidate
       构建 + shipped 生产调用方入口），且请求一次 fresh review 并说明不是 ping。
 
+19. **补 live proof 前先做「环境能力盘点」，旧经验里的凭据/依赖会过期**。2026-11-11 #195092：
+    2026-10 记录的「huoshan provider cost=0 可复用」已失效（CodingPlan 订阅过期 400），
+    deepseek/aliyun/tencent 全部 401，自定义 Anthropic 网关 401/403，本地只有 embedding 模型。
+    若先写完整 harness 再发现模型不可用，会浪费大量轮次。正确顺序：① 逐个探测所有
+    provider/auth 端点（只输出状态码，不输出 key）；② 确认本地模型；③ 再定 proof 形态。
+    **模型不可达时的诚实降级**：不要伪造 live model，也不要把 deterministic stand-in 包装成
+    "real model"。在 body/评论里明确写出凭据状态与哪一层被替代，同时用「独立 base/candidate
+    源码树 + 真实进程 + 真实 shipped 边界 + 因果差分」把可控证据做到最强，最后请 bot
+    指明可执行替代（或交给 maintainer 裁决）。证据可以降级，声明不能降级——
+    一旦被发现隐瞒，整份 proof 的可信度归零。
+20. **真实 Gateway proof 的工程配方与坑位（#195092 实证，可复用）**：
+    - 依赖树版本必须匹配当前 head 的 `package.json`；#195092 需 `@openclaw/fs-safe@0.27.1`
+      （导出 `overwriteFileHandleWithAuthority`），旧 worktree 的 0.26.13 会让插件加载直接
+      `SyntaxError`。**先在多个 worktree 的 `node_modules/.pnpm` 里找对版本再切 symlink**，
+      不要盲目 `pnpm install`。
+    - `plugins.allow: ["knowledge"]` 把 183 个 bundled 插件裁到 2 个（selected memory slot
+      仍自动加载），启动从 >60s 降到可轮询范围；`plugins.slots.memory` 选目标插件。
+    - scratch config 不要用已退役键（`agents.defaults.heartbeat` / `agents.defaults.models`
+      会被 `openclaw config validate` 拒绝），只用 `agents.defaults.model.primary`。
+    - `health` 成功 ≠ 可发 turn：启动期 `chat.send` 返回 `UNAVAILABLE`，必须轮询到接受。
+    - 脱离 Vitest 加载 shipped 模块时，`test-support.ts` 顶层 import `vitest`；用
+      `node:module` 的 `registerHooks` 把 `vitest` 解析到只导出生命周期钩子的 stub
+      （至少 `afterEach` + `onTestFinished`），其余 shipped 模块保持原样，比复制 fixture 更可信。
+    - macOS `tmpdir()` 是 symlink（`/var` → `/private/var`），shipped identity store 的
+      `realpathSync` 校验会抛 "identity checkpoint unavailable"；临时目录必须先 `realpath()`。
+    - Agent 默认只暴露核心工具，插件工具经 `tool_search` → `dispatch_action` 动态发现；
+      `dispatch_action` 支持按工具名直调，构造多轮 tool_calls 前先 dump 首轮请求的
+      `tools` 数组确认。
+
+21. **bot 说「capture 里没有 X 工具调用」时，唯一解法是把 shipped 工具链真的跑起来，
+    不是继续补 in-process 差分**。2026-11-11 #195092 Rev3 拒稿原话："Gateway capture shows
+    startup and a chat turn but no Knowledge save/search calls or results"。Rev4 在真实
+    `gateway run` 的单个 agent turn 内用 scripted provider 发多轮 `tool_calls`：
+    `tool_describe` → `dispatch_action(knowledge_save_page)` ×2 →
+    `dispatch_action(knowledge_grep)` ×2，拿到 `state: published` 回执、真实 FTS5
+    `resultCount`、original-spelling snippets；BASE（同 head 仅还原一个函数）从 2 命中掉到 1。
+    **关键认知**：scripted provider 不等于 stubbed 生产路径——模型只负责"决定调哪个工具"，
+    工具分发、插件、service、SQLite、片段渲染全是 shipped 代码，因果差分照样成立。
+    被验证行为若是确定性逻辑，务必在 body/评论里明确论证"与模型推理无关"，
+    同时如实写出 provider 是 scripted、不声称 live model。
+22. **失败的真实模型实验不得入 PR；顺手把这些工程坑位记进自动化 prompt**：
+    - 本地补了 ollama `qwen2.5:0.5b`（真实开源权重、真实 tool_call），但 0.5b 无法可靠完成
+      多步 NFC/NFD fixture（实测 1 轮后只输出文本、0 tool call）。**不要把它包装成
+      "real model proof"**，只在边界声明里如实写"尝试过、不足以驱动多步"。
+      本机生产凭据依旧全失效 → "real model" 属环境天花板，不是再补一轮证据能解的。
+    - `agent.wait` 在隔离 Gateway 拓扑会立即返回 `status: timeout`，改轮询 `chat.history`
+      直到最终 assistant 消息；`tool_describe` 是**顶层** agent 工具，经 `dispatch_action`
+      调用会报 `Unknown tool id`；`knowledge_save_page` 必须带 `type: "note"`，否则
+      `Choose a valid type from the current ontology`。
+    - **git push 走代理会 `SSL_ERROR_SYSCALL` / `Operation too slow`，直连可通**：
+      `env -u HTTP_PROXY -u HTTPS_PROXY -u http_proxy -u https_proxy git -c http.proxy= -c https.proxy= -c http.version=HTTP/1.1 push ...`；
+      读操作（`ls-remote`）走代理正常，别被"读通"误导。
+    - pre-commit 钩子 `spawn pnpm ENOENT` 时用 corepack shim 挂进 PATH
+      （`exec <corepack> pnpm "$@"` + `COREPACK_NPM_REGISTRY=npmmirror`），**不要 `--no-verify`**。
+    - 每次 push 改 head 后：BASE worktree 也要切到新 SHA 重挂还原补丁 → 两侧重跑 proof →
+      用脚本全文替换 body 里的旧 SHA（别手抄）→ 再请求 re-review。
+23. **"real model" gate 的破局点：先读 gate 原文，再查"本地真实模型"可行性——
+    "no production credential" ≠ "no real model"**。2026-11-12 #195092 实证：
+    - bot 连续三轮以 "root AGENTS.md requires a real agent and model" 拒稿，前两轮误以为
+      只能等生产凭据。读 `AGENTS.md:81` 原文只说 "an isolated Gateway with a real agent
+      and model"，**没限定 hosted tenant**——本地开源权重 LLM（真实推理）字面即满足。
+    - 模型规模是硬门槛：0.5b 连 `tool_choice` 强制都无效（ollama 忽略，返回道歉文本）；
+      **3b 起可用**——qwen2.5:3b 在 temperature 0 下能把含希腊文 NFD 拼写与 UUID 的
+      长 JSON 参数逐字复述（仅键序按字母重排）。
+    - **校验必须键序无关**：deep-compare 前对对象键排序，否则真实且正确的输出会被误判
+      MISMATCH。harness 只比较、从不改写模型输出，每轮任务指令 verbatim 印进 trace。
+    - ollama serve 是独立 GUI 进程，不继承 shell 代理；直连被阻时
+      `launchctl setenv HTTPS_PROXY <proxy>` → `pkill -f Ollama.app` → `open -a Ollama`
+      （`osascript quit` 会被拒绝）→ pull 走代理 → 事后 `launchctl unsetenv` 还原。
+    - 与 scripted 差分的关系要写成"叠加不是替代"：scripted capture 是确定性 BASE 对照，
+      real-model journey 是 gate 满足项；两层都保留，评审更容易接受。
+
 ## 实时校准程序（每次立项/评审应对时执行）
 
 快照数据会老化；以下程序在 2026-10-06 对 openclaw/openclaw#165310 实测有效，约 15 分钟：
