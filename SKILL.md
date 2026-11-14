@@ -3,10 +3,10 @@ name: open-source-contributor
 description: >-
   把 AI 变成开源贡献搭档：从选题立项、Fork 同步、语义化提交到 PR 评审应对的全流程护航。
   覆盖首次贡献决策、commit/PR/CONTRIBUTING 规范自检、找 bug 报高认可度 Issue、自动化评审机器人应对。
-  触发词："开源贡献"、"提 PR"、"first contribution"、"commit 规范"、"报 Issue"、"找 bug"、"评审反馈"、"CONTRIBUTING"。
+  触发词："开源贡献"、"提 PR"、"first contribution"、"commit 规范"、"报 Issue"、"找 bug"、"评审反馈"、"CONTRIBUTING"、"Discrawl"、"clawdtributor"、"贡献者频道动态"。
 agent_created: true
 metadata:
-  version: 1.4.0
+  version: 1.5.0
   category: 开源贡献
   difficulty: 进阶
   architecture: superpower
@@ -39,6 +39,7 @@ metadata:
 | 应对评审反馈、自动化机器人、回复话术 | [references/review-response-playbook.md](references/review-response-playbook.md) | 评审 review 反馈 机器人 维护者 反驳 拆分 |
 | 用近期已合并 PR 校准 scope、proof、兼容和评审判断 | [references/merged-pr-gold-cases.md](references/merged-pr-gold-cases.md) | merged PR gold case OpenClaw owner proof exact-head |
 | 侦察宿主仓库自带的 Agent 规则层与技能包（先服从合约再动手） | [skills/repo-skill-scout/SKILL.md](skills/repo-skill-scout/SKILL.md) ＋ 角色×槽位用法映射 [references/role-usage-map.md](skills/repo-skill-scout/references/role-usage-map.md) | AGENTS.md .agents/skills CLAUDE.md 规则层 路由表 使用说明 角色映射 A/B/C 权限三分 scout_host_pack.py |
+| 官方项目技能协作：Discord 本地归档、贡献者动态、测试与 PR 分诊 | [references/upstream-skill-routing.md](references/upstream-skill-routing.md) | Discrawl clawdtributor OpenClaw 上游技能 wiretap 频道缓存 GitHub 实时复核 |
 | 发现高价值 Issue、正向标签与优先级评分 | [skills/issue-finder/SKILL.md](skills/issue-finder/SKILL.md) | issue 发现 标签 优先级 good first queueable |
 | 挖掘讨论区、判断 feature 值不值得做 | [skills/discussion-scout/SKILL.md](skills/discussion-scout/SKILL.md) | 讨论区 discussion ideas 需求挖掘 feature 价值 立项 养需求 |
 | 发讨论帖 / 提 feature issue 并回评验证 | [skills/feature-proposer/SKILL.md](skills/feature-proposer/SKILL.md) | feature request 提案 验证 正向标签 维护者认可 createDiscussion |

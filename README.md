@@ -26,6 +26,10 @@
 
 渐进式加载：Agent 先读路由表，按需读取 `references/` 或 `skills/`，重复任务交给脚本。
 
+### 官方项目技能协作
+
+处理 OpenClaw 等自带技能的项目时，先通过 `repo-skill-scout` 确认目标仓库规则和上游技能，再按 [上游技能协作与 Discord 归档](references/upstream-skill-routing.md) 路由。该指南覆盖官方 `discrawl`、`clawdtributor` 及测试、评审等相关能力；上游缺失时使用本库的通用流程。它引用官方来源，不要求安装全部官方技能，也不授予项目维护者权限。
+
 ## 技能清单
 
 | 环节 | 技能 | 描述 | 来源 |
