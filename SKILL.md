@@ -6,7 +6,7 @@ description: >-
   触发词："开源贡献"、"提 PR"、"first contribution"、"commit 规范"、"报 Issue"、"找 bug"、"评审反馈"、"CONTRIBUTING"、"Discrawl"、"clawdtributor"、"贡献者频道动态"。
 agent_created: true
 metadata:
-  version: 1.5.0
+  version: 1.6.0
   category: 开源贡献
   difficulty: 进阶
   architecture: superpower
@@ -46,7 +46,7 @@ metadata:
 | feature 判据与验证阶梯（跨子技能元决策） | [references/feature-value-playbook.md](references/feature-value-playbook.md) | 立题五问 决策树 V4 roadmap workaround 查重 |
 | 从认可样本归纳本仓库 issue 画像（gold cases） | [skills/issue-creator/SKILL.md](skills/issue-creator/SKILL.md) | 认可画像 正向标签归纳 gold case |
 | main 代码缺陷挖掘与高认可度报 Issue | [skills/issue-creator/SKILL.md](skills/issue-creator/SKILL.md) | 缺陷挖掘 找bug 报issue 复现 根因 |
-| Fork 预检→分支→修复→PR 全流程与 Proof | [skills/github-contribution/SKILL.md](skills/github-contribution/SKILL.md) | Fork 预检 分支 PR owner exact-head proof |
+| Fork 预检→提前草稿→修复→正式 PR 全流程与 Proof | [skills/github-contribution/SKILL.md](skills/github-contribution/SKILL.md) | Fork 预检 查重 占位 草稿 PR owner exact-head proof |
 | 社区沟通规范、CONTRIBUTING 解读、AI 披露 | [skills/community-etiquette/SKILL.md](skills/community-etiquette/SKILL.md) | 社区礼仪 CONTRIBUTING PR描述 AI披露 维护者 |
 | PR Review 响应策略与反馈分类 | [skills/pr-review/SKILL.md](skills/pr-review/SKILL.md) | PR review 响应 自动化 分类 conversation |
 | PR 提交后动态监控：CI 收敛盯守、失败归因分流、评审补强 | [skills/pr-landing-monitor/SKILL.md](skills/pr-landing-monitor/SKILL.md) | 监控 check-runs 收敛 失败归因 双checkout 迭代修复 落地 |

@@ -5,8 +5,8 @@ source:
   type: derived
   repo: skills-repo/open-source-contributor
   path: skills/github-contribution/SKILL.md
-  version: 1.8.0
-  updated: "2026-08-11"
+  version: 1.9.0
+  updated: "2026-11-21"
   url: https://clawhub.ai/skills/github-contribution
 metadata:
   category: 贡献
@@ -37,15 +37,42 @@ metadata:
 4. **修复计划**：写清 Problem、Expected、Root cause/owner、Canonical fix、Risk/siblings、Proof plan、
    Non-goals。范围由被违反的不变量决定，不由固定文件数或“最小 diff”决定。
 5. **安全建分支**：从已核对的 `upstream/<base>` 新建 topic branch；只修改和暂存授权路径。
-6. **实现修复**：在事实产生处或生命周期 owner 修复；优先复用 canonical flow，删除同一不变量下的
+6. **尽早公开进度**：用户要求或已授权提前占位时，按下方草稿流程在上游允许的最早时点创建有实质进展的 Draft PR，
+   关联真实 issue 并标明未完成工作；不要等到全部长耗时验证结束才让其他贡献者看到进度。
+7. **实现修复**：在事实产生处或生命周期 owner 修复；优先复用 canonical flow，删除同一不变量下的
    重复 retry、fallback、policy 或 dead path。
-7. **按风险验证**：证明原失败、修复后的 owner boundary、sibling paths 和用户可见行为；依赖行为先核
+8. **按风险验证**：证明原失败、修复后的 owner boundary、sibling paths 和用户可见行为；依赖行为先核
    官方文档/源码/类型。从目标规则/package scripts 核实 exact command 和 wrapper，未核实时保留占位符，不猜命令。
    记录 exact head SHA，并明确 unit、mock、真实 Gateway/provider/channel、生产证据边界。
-8. **提交 PR**：优先使用目标仓库当前模板；持续更新 PR body，写 Problem、Why、User impact、Evidence、
+9. **完成 PR**：优先使用目标仓库当前模板；持续更新 PR body，写 Problem、Why、User impact、Evidence、
    Risk/compatibility、LOC、Not tested。只有真实关系或仓库规则要求时才用 `fixes #N`。
-9. **处理评审**：先读最新 bot/maintainer finding 和行动项；修复或用证据解释。按仓库历史策略组织 commit，
+10. **处理评审**：先读最新 bot/maintainer finding 和行动项；修复或用证据解释。按仓库历史策略组织 commit，
    不强制“一条反馈一个 commit”。行为或证据 head 改变后，再按项目规则请求 re-review。
+
+## 提前草稿 PR 与防止重复开发
+
+适用前提：用户明确要求或已持续授权提前公开进度；目标仓库允许该时点的 Draft PR。用户没有授权时，
+不得仅凭技能自行公开 PR。提交前复查 issue 正文、指派、评论、时间线、按编号和主题搜索的开放/已合并 PR、
+当前默认分支，以及作者 PR 限额；搜索结果不能证明没有未公开工作。已有认领、竞争实现、`no-new-fix-pr`、
+维护者要求先讨论、产品/安全决定或权限审查门槛时，尊重这些边界，不用草稿绕过。
+
+先核实问题或需求、实现范围与可行验证，按上游要求完成真实入口复现及提交前检查；在独立分支提交**实际工作**，
+例如符合仓库要求的最小实现和相应验证。不要用空提交、无关文件、虚构 proof 或纯“占坑”绕过 PR 规则。
+上游只允许先开草稿再完成某项构建时，先核实该例外条件并明确记录缺口；上游要求检查在任何 PR 前完成时，
+必须先完成。明确该时点不能满足规则时，先继续可做的本地工作，不发送占位 PR。
+
+创建草稿时，标题和 PR body 标明 WIP，关联准确 issue，简述问题、拟采用的范围、已有实际进展、已执行检查、
+尚未完成的测试/构建/live proof 和下一步。草稿本身是公开的进度信号，不自动代表 issue 已分配，也不能保证
+独占或阻止他人同时开发；不要顺带发送未授权的 issue/Discord 消息或手动添加维护者标签。遵守上游模板与
+作者开放 PR 数量上限；不要批量占位或为长期搁置的问题创建草稿。
+
+发布后持续实施；在每次重大变更和转正式前重新核对 issue、维护者意见与并行 PR。遇到冲突或上游另有实现时，
+停止重复开发并报告，保留自己的工作；依用户授权和项目流程决定交接或后续处理。按上游门槛完成相关测试、
+构建、真实行为证据与必要截图、独立审查，并核对精确 head 后才转正式 PR；草稿未运行 CI 时不可声称 CI 通过。
+
+经验：例如处理 [#202657](https://github.com/openclaw/openclaw/issues/202657) 时，独立实现和浏览器验证进行期间，
+另一位贡献者的 [#202678](https://github.com/openclaw/openclaw/pull/202678) 已先提交。同类高活跃项目应在符合其
+贡献规则且有实质进展后尽早发草稿、持续查重，减少重复劳动；这不是对未来独占权的保证。
 
 ## 安全预检命令
 
